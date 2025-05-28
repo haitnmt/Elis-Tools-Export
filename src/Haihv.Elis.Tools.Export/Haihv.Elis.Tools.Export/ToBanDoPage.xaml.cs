@@ -1,6 +1,6 @@
 namespace Haihv.Elis.Tools.Export;
 
-public partial class ToBanDoPage : ContentPage
+public partial class ToBanDoPage
 {
 	public ToBanDoPage()
 	{

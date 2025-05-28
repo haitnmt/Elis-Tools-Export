@@ -3,7 +3,6 @@ using System.Text;
 
 namespace Haihv.Elis.Tools.Export.Extensions;
 
-
 /// <summary>
 /// Lớp chứa các phương thức mở rộng để mã hóa và giải mã chuỗi văn bản.
 /// </summary>
@@ -19,7 +18,7 @@ public static class EncryptionHelper
         var hashedInput = SHA256.HashData(Encoding.UTF8.GetBytes(input));
         // Chuyển đổi độ dài của khóa từ bit sang byte
         var keyLengthBytes = keySize / 8; //Phép chia lấy phần nguyên
-                                          // Nếu độ dài của bản băm ngắn hơn độ dài yêu cầu của khóa, hãy lặp lại chuỗi ban đầu để đủ độ dài
+        // Nếu độ dài của bản băm ngắn hơn độ dài yêu cầu của khóa, hãy lặp lại chuỗi ban đầu để đủ độ dài
         if (hashedInput.Length < keyLengthBytes)
         {
             var repeatedInput = new byte[keyLengthBytes];
@@ -51,7 +50,7 @@ public static class EncryptionHelper
         if (iv is not null)
         {
             // Đảm bảo độ dài IV luôn là 16 bytes (128 bits)
-            return SHA256.HashData(Encoding.UTF8.GetBytes(iv)).Take(16).ToArray();
+            return SHA256.HashData(Encoding.UTF8.GetBytes(iv)).Take(blockSize / 8).ToArray();
         }
 
         // Nếu không có input, tạo IV ngẫu nhiên

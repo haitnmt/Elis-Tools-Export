@@ -3,9 +3,9 @@ using Haihv.Elis.Tools.Export.Models;
 
 namespace Haihv.Elis.Tools.Export
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage
     {
-        int count = 0;
+        private int _count;
         private readonly IConnectionService _connectionService;
 
         public MainPage(IConnectionService connectionService)
@@ -77,12 +77,12 @@ namespace Haihv.Elis.Tools.Export
 
         private void OnCounterClicked(object? sender, EventArgs e)
         {
-            count++;
+            _count++;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+            if (_count == 1)
+                CounterBtn.Text = $"Clicked {_count} time";
             else
-                CounterBtn.Text = $"Clicked {count} times";
+                CounterBtn.Text = $"Clicked {_count} times";
 
             SemanticScreenReader.Announce(CounterBtn.Text);
         }
