@@ -9,13 +9,9 @@
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-    <ShellContent
-        Title="Kết nối dữ liệu"
-        ContentTemplate="{DataTemplate local:DataConnectionPage}"
-        Route="DataConnection" />
+        Route="MainPage"/>
     <ShellContent
         Title="Tờ bản đồ"
         ContentTemplate="{DataTemplate local:ToBanDoPage}"
-        Route="ToBanDo" />
+        Route="ToBanDo"/>
 </Shell>

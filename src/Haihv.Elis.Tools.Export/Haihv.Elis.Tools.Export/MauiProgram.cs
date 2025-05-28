@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Haihv.Elis.Tools.Export.Services;
 
 namespace Haihv.Elis.Tools.Export
 {
@@ -15,8 +16,12 @@ namespace Haihv.Elis.Tools.Export
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // Đăng ký services
+            builder.Services.AddSingleton<IConnectionService, ConnectionService>();
+            builder.Services.AddTransient<MainPage>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
