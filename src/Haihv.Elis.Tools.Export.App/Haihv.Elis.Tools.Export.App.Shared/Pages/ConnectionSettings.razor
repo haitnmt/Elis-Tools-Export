@@ -1,0 +1,105 @@
+﻿@page "/connection-settings"
+@using Haihv.Elis.Tools.Data.Models
+@using Haihv.Elis.Tools.Export.App.Shared.Extensions
+@using Haihv.Elis.Tools.Export.App.Shared.Settings
+@using Microsoft.Data.SqlClient
+
+<FluentLabel Typo="Typography.H3">Cấu hình kết nối dữ liệu ELIS SQL</FluentLabel>
+<FluentStack Orientation="Orientation.Vertical" Gap="16px">
+    <FluentTextField Label="Server" @bind-Value="@_connectionInfo.Server" Required="true" />
+    <FluentTextField Label="Database" @bind-Value="_connectionInfo.Database" Required="true" />
+    <FluentTextField Label="User ID" @bind-Value="_connectionInfo.Username" Required="true" />
+    <FluentTextField Label="Password" @bind-Value="_connectionInfo.Password" Required="true" TextFieldType="TextFieldType.Password" />
+    <FluentStack Orientation="Orientation.Horizontal">
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@CheckConnectionSettings">Kiểm tra kết nối</FluentButton>
+        <FluentButton Appearance="Appearance.Accent"
+                      Disabled="@(!_isConnected)"
+                      OnClick="@SaveConnectionSettings">Lưu</FluentButton>
+    </FluentStack>
+</FluentStack>
+
+@inject IFileService FileService
+@inject ILogger Logger
+@inject IMemoryCache MemoryCache
+@inject IToastService ToastService
+@code {
+
+    private ConnectionInfo _connectionInfo = new();
+    private readonly string _filePath = FilePath.PathConnectionString;
+    private const string KeyConnectionInfo = DataConnection.KeyConnectionInfo;
+    private bool _isConnected;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var connectionInfo = MemoryCache.Get<ConnectionInfo>(KeyConnectionInfo);
+            _connectionInfo = connectionInfo ?? await FileService.LoadConnectionInfoAsync(_filePath) ?? new ConnectionInfo();
+            MemoryCache.Set(KeyConnectionInfo, _connectionInfo);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowWarning("Không thể tải thông tin kết nối. Vui lòng kiểm tra lại.");
+            Logger.Error(ex, "Failed to load connection settings.");
+        }
+    }
+    private async Task SaveConnectionSettings()
+    {
+        try
+        {
+            await FileService.SaveConnectionInfoAsync(_filePath, _connectionInfo);
+            ToastService.ShowSuccess("Thông tin kết nối đã được lưu thành công.");
+            Logger.Information("Connection settings saved successfully.");
+            //Update MainLayout with new connection info
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("Không thể lưu thông tin kết nối. Vui lòng kiểm tra lại.");
+            Logger.Error(ex, "Failed to save connection settings.");
+        }
+    }
+    private async Task CheckConnectionSettings()
+    {
+        try
+        {
+            if (!_connectionInfo.IsValid())
+            {
+                Logger.Warning("Connection settings are not valid. Please check the input fields.");
+                _isConnected = false;
+                ToastService.ShowWarning("Thông tin kết nối không hợp lệ. Vui lòng kiểm tra lại.");
+                return;
+            }
+            var connectionString = _connectionInfo.ToConnectionString();
+            await using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            const string sql = "SELECT count(GCNQSDD.MaGCN) FROM GCNQSDD WHERE LEN(SoSerial) > 8";
+            await using var command = new SqlCommand(sql, connection);
+            var count = await command.ExecuteScalarAsync() as long? ?? -1;
+            if (count < 0)
+            {
+                _isConnected = false;
+                ToastService.ShowWarning("Dữ liệu không có thông tin Giấy chứng nhận hợp lệ nào!");
+                Logger.Error("Query returned no results or an error occurred.");
+            }
+            else
+            {
+                _isConnected = true;
+                MemoryCache.Set(KeyConnectionInfo, _connectionInfo);
+                ToastService.ShowSuccess("Kết nối đến cơ sở dữ liệu thành công.");
+                Logger.Information("Connection to database successful: {Server}, {Database}", 
+                    _connectionInfo.Server, _connectionInfo.Database);
+            }
+        }
+        catch (Exception ex)
+        {
+            _isConnected = false;
+            ToastService.ShowWarning("Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra lại thông tin kết nối.");
+            Logger.Error(ex,"Failed to connect to the database. Please check your connection settings.");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+}

@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Data", "Haihv.Elis.Tools.Data\Haihv.Elis.Tools.Data.csproj", "{8B875C2E-2BD9-48A6-8559-3255790BF3D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Extensions.String", "Haihv.Extensions.String\Haihv.Extensions.String.csproj", "{28A2139B-9EB0-4666-B95C-A51E95019D6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Export.App", "Haihv.Elis.Tools.Export.App\Haihv.Elis.Tools.Export.App\Haihv.Elis.Tools.Export.App.csproj", "{DE668A29-9994-4F7E-B170-CA5F44F66AC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Export.App.Shared", "Haihv.Elis.Tools.Export.App\Haihv.Elis.Tools.Export.App.Shared\Haihv.Elis.Tools.Export.App.Shared.csproj", "{1A02D9E0-D918-4696-8D56-A2686C206A20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Export.App.Web", "Haihv.Elis.Tools.Export.App\Haihv.Elis.Tools.Export.App.Web\Haihv.Elis.Tools.Export.App.Web.csproj", "{F420B822-DD18-48E8-9CA7-7BCED63EC469}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B875C2E-2BD9-48A6-8559-3255790BF3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B875C2E-2BD9-48A6-8559-3255790BF3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B875C2E-2BD9-48A6-8559-3255790BF3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B875C2E-2BD9-48A6-8559-3255790BF3D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28A2139B-9EB0-4666-B95C-A51E95019D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28A2139B-9EB0-4666-B95C-A51E95019D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28A2139B-9EB0-4666-B95C-A51E95019D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28A2139B-9EB0-4666-B95C-A51E95019D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE668A29-9994-4F7E-B170-CA5F44F66AC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE668A29-9994-4F7E-B170-CA5F44F66AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE668A29-9994-4F7E-B170-CA5F44F66AC6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{DE668A29-9994-4F7E-B170-CA5F44F66AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE668A29-9994-4F7E-B170-CA5F44F66AC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A02D9E0-D918-4696-8D56-A2686C206A20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A02D9E0-D918-4696-8D56-A2686C206A20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A02D9E0-D918-4696-8D56-A2686C206A20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A02D9E0-D918-4696-8D56-A2686C206A20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F420B822-DD18-48E8-9CA7-7BCED63EC469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F420B822-DD18-48E8-9CA7-7BCED63EC469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F420B822-DD18-48E8-9CA7-7BCED63EC469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F420B822-DD18-48E8-9CA7-7BCED63EC469}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DBABF5F3-F685-4F49-BF46-C1F471100511}
+	EndGlobalSection
+EndGlobal
