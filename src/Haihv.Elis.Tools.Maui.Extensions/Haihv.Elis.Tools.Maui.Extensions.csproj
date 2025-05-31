@@ -25,9 +25,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Haihv.Elis.Tools.Data.Extensions\Haihv.Elis.Tools.Data.Extensions.csproj" />
-      <ProjectReference Include="..\Haihv.Elis.Tools.Maui.Services\Haihv.Elis.Tools.Maui.Services.csproj" />
-      <ProjectReference Include="..\Haihv.Elis.Tools.Services\Haihv.Elis.Tools.Services.csproj" />
+      <ProjectReference Include="..\Haihv.Elis.Tools.Data\Haihv.Elis.Tools.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Platforms\MacCatalyst\" />
     </ItemGroup>
 
 </Project>

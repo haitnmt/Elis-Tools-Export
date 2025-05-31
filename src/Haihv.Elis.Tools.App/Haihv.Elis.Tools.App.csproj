@@ -69,7 +69,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Haihv.Elis.Tools.Data\Haihv.Elis.Tools.Data.csproj" />
-	  <ProjectReference Include="..\Haihv.Elis.Tools.Data.Extensions\Haihv.Elis.Tools.Data.Extensions.csproj" />
+	  <ProjectReference Include="..\Haihv.Elis.Tools.Maui.Extensions\Haihv.Elis.Tools.Maui.Extensions.csproj" />
 	  <ProjectReference Include="..\Haihv.Extensions.String\Haihv.Extensions.String.csproj" />
 	</ItemGroup>
 
