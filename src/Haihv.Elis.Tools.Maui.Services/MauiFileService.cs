@@ -1,5 +1,5 @@
-using System.Text;
 using Haihv.Elis.Tools.Services;
+using System.Text;
 using ILogger = Serilog.ILogger;
 
 namespace Haihv.Elis.Tools.Maui.Services;
@@ -270,7 +270,8 @@ public class MauiFileService(ILogger logger) : IFileService
             logger.Error(ex, "Lỗi khi chọn file");
             return null;
         }
-    }    public async Task<bool> SaveFileAsAsync(string content, string suggestedFileName = "ConnectionInfo.inf", string title = "Lưu file cấu hình")
+    }
+    public async Task<bool> SaveFileAsAsync(string content, string suggestedFileName = "ConnectionInfo.inf", string title = "Lưu file cấu hình")
     {
         try
         {
@@ -303,9 +304,9 @@ public class MauiFileService(ILogger logger) : IFileService
             var mainPage = Application.Current?.Windows.FirstOrDefault()?.Page;
             if (mainPage == null) return true;
             var openFolder = await mainPage.DisplayAlert(
-                "Thành công", 
-                $"File đã được lưu tại:\n{filePath}\n\nBạn có muốn mở thư mục Downloads?", 
-                "Mở thư mục", 
+                "Thành công",
+                $"File đã được lưu tại:\n{filePath}\n\nBạn có muốn mở thư mục Downloads?",
+                "Mở thư mục",
                 "OK");
 
             if (!openFolder) return true;
@@ -338,7 +339,8 @@ public class MauiFileService(ILogger logger) : IFileService
             logger.Error(ex, "Lỗi khi lưu file");
             return false;
         }
-    }    private string GetDefaultDownloadsPath()
+    }
+    private string GetDefaultDownloadsPath()
     {
         try
         {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36127.28 d17.14
+VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Data", "Haihv.Elis.Tools.Data\Haihv.Elis.Tools.Data.csproj", "{8B875C2E-2BD9-48A6-8559-3255790BF3D1}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Data.Extensions", "Haihv.Elis.Tools.Data.Extensions\Haihv.Elis.Tools.Data.Extensions.csproj", "{269E9096-C95A-423E-B67B-58AD965A45DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.Maui.Extensions", "Haihv.Elis.Tools.Maui.Extensions\Haihv.Elis.Tools.Maui.Extensions.csproj", "{522C8A7B-3656-49B9-9705-6C4FF0688974}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haihv.Elis.Tools.App", "Haihv.Elis.Tools.App\Haihv.Elis.Tools.App.csproj", "{77432788-31C4-4D24-80BD-45BD8E0F8E29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,11 @@ Global
 		{522C8A7B-3656-49B9-9705-6C4FF0688974}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{522C8A7B-3656-49B9-9705-6C4FF0688974}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{522C8A7B-3656-49B9-9705-6C4FF0688974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77432788-31C4-4D24-80BD-45BD8E0F8E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77432788-31C4-4D24-80BD-45BD8E0F8E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77432788-31C4-4D24-80BD-45BD8E0F8E29}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{77432788-31C4-4D24-80BD-45BD8E0F8E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77432788-31C4-4D24-80BD-45BD8E0F8E29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

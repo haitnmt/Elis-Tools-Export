@@ -9,7 +9,15 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            // Lấy tỷ lệ thu phóng của màn hình:
+            var scale = DeviceDisplay.MainDisplayInfo.Density;
+            return new Window(new AppShell())
+            {
+                Height = 750 * scale,
+                Width = 960 * scale,
+                MinimumHeight = 750,
+                MinimumWidth = 960,
+            };
         }
     }
 }

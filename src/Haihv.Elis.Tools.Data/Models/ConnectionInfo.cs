@@ -1,16 +1,71 @@
 ﻿using Haihv.Extensions.String;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Haihv.Elis.Tools.Data.Models;
 
-public class ConnectionInfo
+public class ConnectionInfo : INotifyPropertyChanged
 {
-    public string Server { get; set; } = "localhost";
-    public string Database { get; set; } = "elis";
-    public string Username { get; set; } = "sa";
-    public string Password { get; set; } = "123456";
-    public bool UseIntegratedSecurity { get; set; }
-    public int ConnectTimeout { get; set; } = 10;
+    private string _server = "localhost";
+    private string _database = "elis";
+    private string _username = "sa";
+    private string _password = "123456";
+    private bool _useIntegratedSecurity;
+    private int _connectTimeout = 10;
+
+    public string Server
+    {
+        get => _server;
+        set => SetProperty(ref _server, value);
+    }
+
+    public string Database
+    {
+        get => _database;
+        set => SetProperty(ref _database, value);
+    }
+
+    public string Username
+    {
+        get => _username;
+        set => SetProperty(ref _username, value);
+    }
+
+    public string Password
+    {
+        get => _password;
+        set => SetProperty(ref _password, value);
+    }
+
+    public bool UseIntegratedSecurity
+    {
+        get => _useIntegratedSecurity;
+        set => SetProperty(ref _useIntegratedSecurity, value);
+    }
+
+    public int ConnectTimeout
+    {
+        get => _connectTimeout;
+        set => SetProperty(ref _connectTimeout, value);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(backingStore, value))
+            return false;
+
+        backingStore = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
 
     public string ToConnectionString()
     {

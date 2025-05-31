@@ -1,4 +1,4 @@
-﻿namespace Haihv.Elis.Tools.Maui.Extensions
+﻿namespace Haihv.Elis.Tools.App.Settings
 {
     internal static class FilePath
     {
