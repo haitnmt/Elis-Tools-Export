@@ -82,13 +82,13 @@ public class ConnectionInfo
             System.Diagnostics.Debug.WriteLine($"Lỗi khi serialize thông tin kết nối: {ex.Message}");
             throw;
         }
-        
+
     }
 
     public string RenderConnectionInfo()
-    
-    => IsValid() ? 
-        $"Server: {Server} | Database: {Database} | User: {Username}" : 
+
+    => IsValid() ?
+        $"Server: {Server} | Database: {Database} | User: {Username}" :
         string.Empty;
 
 }
