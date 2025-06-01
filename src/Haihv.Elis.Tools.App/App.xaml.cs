@@ -1,4 +1,8 @@
-﻿namespace Haihv.Elis.Tools.App
+﻿using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Devices;
+
+namespace Haihv.Elis.Tools.App
 {
     public partial class App : Application
     {

@@ -40,7 +40,7 @@
                         Style="{StaticResource LableEntry}"/>
                     <Entry
                         x:Name="EntryServer"
-                        Text="{Binding ConnectionInfo.Server}"
+                        Text="localhost"
                         Placeholder="Máy chủ dữ liệu"/>
 
                     <!--Cơ sở dữ liệu-->
@@ -49,7 +49,7 @@
                         Style="{StaticResource LableEntry}"/>
                     <Entry
                         x:Name="EntryDatabase"
-                        Text="{Binding ConnectionInfo.Database}"
+                        Text="elis"
                         Placeholder="Tên cơ sở dữ liệu"/>
 
                     <!--Tài khoản-->
@@ -59,7 +59,7 @@
 
                     <Entry
                         x:Name="EntryUserId"
-                        Text="{Binding ConnectionInfo.Username}"
+                        Text="sa"
                         Placeholder="Tên tài khoản truy cập"/>
 
                     <!--Mật khẩu-->
@@ -70,7 +70,7 @@
                     <Entry
                         x:Name="EntryPassword"
                         IsPassword="True"
-                        Text="{Binding ConnectionInfo.Password}"
+                        Text="1234567"
                         Placeholder="Mật khẩu truy cập"/>
                     <Grid
                         HorizontalOptions="Fill"

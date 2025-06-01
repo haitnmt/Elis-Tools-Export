@@ -74,7 +74,7 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Haihv.Elis.Tools.Data\Haihv.Elis.Tools.Data.csproj" />
+	  <ProjectReference Include="..\Haihv.Elis.Tools.Data.Services\Haihv.Elis.Tools.Data.Services.csproj" />
 	  <ProjectReference Include="..\Haihv.Elis.Tools.Maui.Extensions\Haihv.Elis.Tools.Maui.Extensions.csproj" />
 	  <ProjectReference Include="..\Haihv.Extensions.String\Haihv.Extensions.String.csproj" />
 	</ItemGroup>

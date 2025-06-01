@@ -5,6 +5,7 @@
              Title="ExportData">
     <VerticalStackLayout>
         <Label 
+            x:Name="DataInfoLabel"
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />

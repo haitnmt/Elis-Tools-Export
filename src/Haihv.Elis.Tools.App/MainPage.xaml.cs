@@ -1,38 +1,18 @@
 ﻿using Haihv.Elis.Tools.Data.Models;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
 
 namespace Haihv.Elis.Tools.App;
 
-public partial class MainPage : INotifyPropertyChanged
+public partial class MainPage : ContentPage
 {
     private ConnectionInfo _connectionInfo = null!;
-    public ConnectionInfo ConnectionInfo
-    {
-        get => _connectionInfo;
-        set => SetProperty(ref _connectionInfo, value);
-    }
-
-    public new event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChangedCustom([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(backingStore, value)) return;
-
-        backingStore = value;
-        OnPropertyChangedCustom(propertyName);
-    }
-
-    public MainPage()
+    
+    private readonly ConnectionService _connectionService;
+    public MainPage(ConnectionService connectionService)
     {
         InitializeComponent();
-
+        _connectionService = connectionService;
         // Đọc thông tin kết nối từ file cấu hình
         _ = LoadConnectionInfoAsync();
 
@@ -48,12 +28,13 @@ public partial class MainPage : INotifyPropertyChanged
 
             if (loadedInfo != null && loadedInfo.IsValid())
             {
-                ConnectionInfo = loadedInfo;
-                OnPropertyChangedCustom(nameof(ConnectionInfo));
-                var (success, message) = await ConnectionInfo.CheckConnection();
+                _connectionInfo = loadedInfo;
+                var (success, message) = await _connectionInfo.CheckConnection();
                 if (success)
                 {
                     await DisplayAlert("Thông báo", "Đọc và kiểm tra thông tin kết nối đã lưu thành công!", "OK");
+                    _connectionService.ConnectionInfo = _connectionInfo;
+                    UpdateConnectionInfoUI(); // Cập nhật UI với thông tin kết nối đã đọc
                     ExportDataBtn.IsEnabled = true; // Kích hoạt nút Export nếu kết nối thành công
                 }
                 else
@@ -72,17 +53,26 @@ public partial class MainPage : INotifyPropertyChanged
         // Nếu không đọc được từ file hoặc dữ liệu không hợp lệ, sử dụng giá trị mặc định
         SetDefaultConnectionInfo();
     }
-
+    private void UpdateConnectionInfoUI()
+    {
+        // Cập nhật các trường nhập liệu từ ConnectionInfo
+        EntryServer.Text = _connectionInfo.Server;
+        EntryDatabase.Text = _connectionInfo.Database;
+        EntryUserId.Text = _connectionInfo.Username;
+        EntryPassword.Text = _connectionInfo.Password;
+    }
     private void SetDefaultConnectionInfo()
     {
-        ConnectionInfo = new ConnectionInfo
+        _connectionInfo = new ConnectionInfo
         {
             Server = "localhost",
             Database = "ElisTools",
             Username = "sa",
             Password = "123456",
         };
-        OnPropertyChangedCustom(nameof(ConnectionInfo));
+        // Cập nhật UI với thông tin kết nối mặc định
+        UpdateConnectionInfoUI();
+        _connectionService.ConnectionInfo = _connectionInfo;
     }
     
     private async Task SaveConnection()
@@ -93,6 +83,7 @@ public partial class MainPage : INotifyPropertyChanged
             var (success, message) = await  _connectionInfo.SaveConnectionInfoAsync();
             if (success)
             {
+                _connectionService.ConnectionInfo = _connectionInfo; // Cập nhật thông tin kết nối
                 ExportDataBtn.IsEnabled = true;
             }
             else
@@ -112,12 +103,12 @@ public partial class MainPage : INotifyPropertyChanged
         {
             ExportDataBtn.IsEnabled = false; // Vô hiệu hóa nút Export khi đang kiểm tra kết nối
             // Cập nhật dữ liệu từ UI vào ConnectionInfo (phòng trường hợp binding không hoạt động)
-            ConnectionInfo.Server = EntryServer.Text;
-            ConnectionInfo.Database = EntryDatabase.Text;
-            ConnectionInfo.Username = EntryUserId.Text;
-            ConnectionInfo.Password = EntryPassword.Text;
+            _connectionInfo.Server = EntryServer.Text;
+            _connectionInfo.Database = EntryDatabase.Text;
+            _connectionInfo.Username = EntryUserId.Text;
+            _connectionInfo.Password = EntryPassword.Text;
 
-            var (success, message) = await ConnectionInfo.CheckConnection();
+            var (success, message) = await _connectionInfo.CheckConnection();
             if (success)
             {
                 await DisplayAlert("Thông báo", "Kết nối thành công!", "OK");
@@ -179,7 +170,9 @@ public partial class MainPage : INotifyPropertyChanged
             var (importedConnection, message) = await filePath.ImportConnectionSettings();
             if (importedConnection is not null)
             {
-                ConnectionInfo = importedConnection;
+                _connectionInfo = importedConnection;
+                // Cập nhật UI với thông tin kết nối đã import
+                UpdateConnectionInfoUI();
                 await SaveConnection();
             }
             await DisplayAlert("Thông báo", 
@@ -196,14 +189,8 @@ public partial class MainPage : INotifyPropertyChanged
     {
         try
         {
-            // Cập nhật thông tin kết nối từ UI trước khi export
-            ConnectionInfo.Server = EntryServer.Text;
-            ConnectionInfo.Database = EntryDatabase.Text;
-            ConnectionInfo.Username = EntryUserId.Text;
-            ConnectionInfo.Password = EntryPassword.Text;
-            
             // Lưu thông tin kết nối vào file (có mã hóa)
-            var (success, message) = await ConnectionInfo.ExportConnectionSettings();
+            var (success, message) = await _connectionInfo.ExportConnectionSettings();
 
             if (!success)
             {

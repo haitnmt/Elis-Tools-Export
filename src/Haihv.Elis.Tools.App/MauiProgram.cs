@@ -1,7 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Serilog;
 using CommunityToolkit.Maui;
+using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 
 namespace Haihv.Elis.Tools.App
 {
@@ -25,6 +29,10 @@ namespace Haihv.Elis.Tools.App
                 .CreateLogger();
 
             builder.Logging.AddSerilog(Log.Logger);
+            builder.Services.AddSingleton<ConnectionService>();
+
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<ExportData>();
 
 #if DEBUG
             builder.Logging.AddDebug();
