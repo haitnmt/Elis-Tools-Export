@@ -89,14 +89,14 @@
                         <Button
                             x:Name="ImportDataBtn"
                             Grid.Column="1"
-                            Text="Mở tệp Kết nối"
+                            Text="Mở tệp kết nối"
                             SemanticProperties.Hint="Import thông tin kết nối từ file"
                             Clicked="ImportDataBtn_Clicked"
                             HorizontalOptions="Fill" />
                         <Button
                             x:Name="ExportDataBtn"
                             Grid.Column="2"
-                            Text="Chia sẻ tệp Kết nối"
+                            Text="Chia sẻ tệp kết nối"
                             SemanticProperties.Hint="Export thông tin kết nối ra file JSON"
                             IsEnabled="False"
                             Clicked="ExportDataBtn_Clicked"
