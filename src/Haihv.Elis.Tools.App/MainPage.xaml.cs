@@ -4,21 +4,20 @@ using Haihv.Elis.Tools.Maui.Extensions;
 
 namespace Haihv.Elis.Tools.App;
 
-public partial class MainPage : ContentPage
+public partial class MainPage
 {
     private ConnectionInfo _connectionInfo = null!;
-    
+
     private readonly ConnectionService _connectionService;
+
     public MainPage(ConnectionService connectionService)
     {
         InitializeComponent();
         _connectionService = connectionService;
         // Đọc thông tin kết nối từ file cấu hình
         _ = LoadConnectionInfoAsync();
-
-        // Thiết lập BindingContext cho toàn bộ trang
-        BindingContext = this;
     }
+
     private async Task LoadConnectionInfoAsync()
     {
         try
@@ -32,15 +31,17 @@ public partial class MainPage : ContentPage
                 var (success, message) = await _connectionInfo.CheckConnection();
                 if (success)
                 {
+                    UpdateConnectionInfoUi(); // Cập nhật UI với thông tin kết nối đã đọc
                     await DisplayAlert("Thông báo", "Đọc và kiểm tra thông tin kết nối đã lưu thành công!", "OK");
                     _connectionService.ConnectionInfo = _connectionInfo;
-                    UpdateConnectionInfoUI(); // Cập nhật UI với thông tin kết nối đã đọc
                     ExportDataBtn.IsEnabled = true; // Kích hoạt nút Export nếu kết nối thành công
                 }
                 else
                 {
-                    await DisplayAlert("Lỗi", $"Kết nối thất bại: {message}\nVui lòng sửa và kiểm tra lại thông tin kết nối!", "OK");
+                    await DisplayAlert("Lỗi",
+                        $"Kết nối thất bại: {message}\nVui lòng sửa và kiểm tra lại thông tin kết nối!", "OK");
                 }
+
                 return;
             }
         }
@@ -53,7 +54,8 @@ public partial class MainPage : ContentPage
         // Nếu không đọc được từ file hoặc dữ liệu không hợp lệ, sử dụng giá trị mặc định
         SetDefaultConnectionInfo();
     }
-    private void UpdateConnectionInfoUI()
+
+    private void UpdateConnectionInfoUi()
     {
         // Cập nhật các trường nhập liệu từ ConnectionInfo
         EntryServer.Text = _connectionInfo.Server;
@@ -61,6 +63,7 @@ public partial class MainPage : ContentPage
         EntryUserId.Text = _connectionInfo.Username;
         EntryPassword.Text = _connectionInfo.Password;
     }
+
     private void SetDefaultConnectionInfo()
     {
         _connectionInfo = new ConnectionInfo
@@ -68,19 +71,19 @@ public partial class MainPage : ContentPage
             Server = "localhost",
             Database = "ElisTools",
             Username = "sa",
-            Password = "123456",
+            Password = "123456"
         };
         // Cập nhật UI với thông tin kết nối mặc định
-        UpdateConnectionInfoUI();
+        UpdateConnectionInfoUi();
         _connectionService.ConnectionInfo = _connectionInfo;
     }
-    
+
     private async Task SaveConnection()
     {
         try
         {
             // Lưu thông tin kết nối vào file sau khi kết nối thành công
-            var (success, message) = await  _connectionInfo.SaveConnectionInfoAsync();
+            var (success, message) = await _connectionInfo.SaveConnectionInfoAsync();
             if (success)
             {
                 _connectionService.ConnectionInfo = _connectionInfo; // Cập nhật thông tin kết nối
@@ -96,7 +99,7 @@ public partial class MainPage : ContentPage
             await DisplayAlert("Lỗi", $"Không thể kiểm tra kết nối: {exception.Message}", "OK");
         }
     }
-    
+
     private async void CheckConnectionBtn_Clicked(object? sender, EventArgs e)
     {
         try
@@ -124,41 +127,35 @@ public partial class MainPage : ContentPage
             await DisplayAlert("Lỗi", $"Không thể kiểm tra kết nối: {exception.Message}", "OK");
         }
     }
-    
+
     private async void ImportDataBtn_Clicked(object sender, EventArgs e)
     {
         try
         {
             // Vô hiệu hóa nút Export khi đang import
-            ExportDataBtn.IsEnabled = false; 
+            ExportDataBtn.IsEnabled = false;
             // Sử dụng cách tiếp cận đơn giản hơn cho file picker
             var pickOptions = new PickOptions
             {
-                PickerTitle = "Chọn file thông tin kết nối",
+                PickerTitle = "Chọn file thông tin kết nối"
             };
-            
+
             var result = await FilePicker.Default.PickAsync(pickOptions);
             if (result != null)
-            {
                 // Đọc thông tin kết nối từ file (tự động thử cả mã hóa và không mã hóa)
                 await ProcessConnectionImport(result.FullPath);
-            }
         }
         catch (Exception ex)
         {
             var errorMessage = ex.Message;
-            
+
             // Xử lý các lỗi cụ thể
             if (ex.Message.Contains("This platform does not support this file type"))
-            {
                 errorMessage = "File type không được hỗ trợ. Vui lòng chọn file .inf, .json hoặc .txt";
-            }
             else if (ex.Message.Contains("No file was selected"))
-            {
                 // Người dùng hủy chọn file, không cần hiển thị thông báo lỗi
                 return;
-            }
-            
+
             await DisplayAlert("Lỗi", $"Không thể import thông tin kết nối: {errorMessage}", "OK");
         }
     }
@@ -172,19 +169,20 @@ public partial class MainPage : ContentPage
             {
                 _connectionInfo = importedConnection;
                 // Cập nhật UI với thông tin kết nối đã import
-                UpdateConnectionInfoUI();
+                UpdateConnectionInfoUi();
                 await SaveConnection();
             }
-            await DisplayAlert("Thông báo", 
-                string.IsNullOrEmpty(message) ? 
-                    "Tệp thông tin kết nối chính xác!" : 
-                    $"Import thành công!\n{message}", "OK");
+
+            await DisplayAlert("Thông báo",
+                string.IsNullOrEmpty(message) ? "Tệp thông tin kết nối chính xác!" : $"Import thành công!\n{message}",
+                "OK");
         }
         catch (Exception ex)
         {
             await DisplayAlert("Lỗi", $"Không thể đọc thông tin kết nối từ file: {ex.Message}", "OK");
         }
     }
+
     private async void ExportDataBtn_Clicked(object sender, EventArgs e)
     {
         try
@@ -204,19 +202,15 @@ public partial class MainPage : ContentPage
                 "Chia sẻ", "Mở vị trí file");
 
             if (shareChoice)
-            {
                 // Người dùng chọn chia sẻ
                 await Share.Default.RequestAsync(new ShareFileRequest
                 {
                     Title = "Chia sẻ file thông tin kết nối",
                     File = new ShareFile(message)
                 });
-            }
             else
-            {
                 // Người dùng chọn mở vị trí file
                 await FileHelper.OpenFileLocation(message);
-            }
         }
         catch (Exception ex)
         {

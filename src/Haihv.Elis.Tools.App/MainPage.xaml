@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Haihv.Elis.Tools.App.MainPage">
@@ -11,67 +12,67 @@
             <Label
                 Text="Xin chào!"
                 Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1"/>
+                SemanticProperties.HeadingLevel="Level1" />
 
             <Label
                 Text="Công cụ dùng để trích xuất dữ liệu ELIS SQL"
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Công cụ dùng để trích xuất dữ liệu ELIS SQLI"/>
+                SemanticProperties.Description="Công cụ dùng để trích xuất dữ liệu ELIS SQLI" />
 
             <BoxView
                 HeightRequest="1"
                 Color="Gray"
                 HorizontalOptions="Fill"
-                Margin="0,10"/>
+                Margin="0,10" />
 
             <VerticalStackLayout
                 Spacing="10">
                 <Label
                     Text="Thông tin kết nối dữ liệu"
                     Style="{StaticResource SubHeadline}"
-                    SemanticProperties.HeadingLevel="Level3"/>
+                    SemanticProperties.HeadingLevel="Level3" />
                 <VerticalStackLayout
                     Spacing="2"
                     WidthRequest="560">
                     <!--Máy chủ-->
                     <Label
                         Text="Máy chủ dữ liệu:"
-                        Style="{StaticResource LableEntry}"/>
+                        Style="{StaticResource LableEntry}" />
                     <Entry
                         x:Name="EntryServer"
                         Text="localhost"
-                        Placeholder="Máy chủ dữ liệu"/>
+                        Placeholder="Máy chủ dữ liệu" />
 
                     <!--Cơ sở dữ liệu-->
                     <Label
                         Text="Tên cơ sở dữ liệu:"
-                        Style="{StaticResource LableEntry}"/>
+                        Style="{StaticResource LableEntry}" />
                     <Entry
                         x:Name="EntryDatabase"
                         Text="elis"
-                        Placeholder="Tên cơ sở dữ liệu"/>
+                        Placeholder="Tên cơ sở dữ liệu" />
 
                     <!--Tài khoản-->
                     <Label
                         Text="Tên tài khoản truy cập:"
-                        Style="{StaticResource LableEntry}"/>
+                        Style="{StaticResource LableEntry}" />
 
                     <Entry
                         x:Name="EntryUserId"
                         Text="sa"
-                        Placeholder="Tên tài khoản truy cập"/>
+                        Placeholder="Tên tài khoản truy cập" />
 
                     <!--Mật khẩu-->
                     <Label
                         Text="Mật khẩu truy cập:"
-                        Style="{StaticResource LableEntry}"/>
+                        Style="{StaticResource LableEntry}" />
 
                     <Entry
                         x:Name="EntryPassword"
                         IsPassword="True"
                         Text="1234567"
-                        Placeholder="Mật khẩu truy cập"/>
+                        Placeholder="Mật khẩu truy cập" />
                     <Grid
                         HorizontalOptions="Fill"
                         ColumnDefinitions="*,*,*"
@@ -83,14 +84,14 @@
                             Text="Kiểm tra Kết nối"
                             SemanticProperties.Hint="Kiểm tra kết nối đến cơ sở dữ liệu"
                             Clicked="CheckConnectionBtn_Clicked"
-                            HorizontalOptions="Fill"/>
+                            HorizontalOptions="Fill" />
                         <Button
                             x:Name="ImportDataBtn"
                             Grid.Column="1"
                             Text="Mở tệp Kết nối"
                             SemanticProperties.Hint="Import thông tin kết nối từ file"
                             Clicked="ImportDataBtn_Clicked"
-                            HorizontalOptions="Fill"/>
+                            HorizontalOptions="Fill" />
                         <Button
                             x:Name="ExportDataBtn"
                             Grid.Column="2"
@@ -98,7 +99,7 @@
                             SemanticProperties.Hint="Export thông tin kết nối ra file JSON"
                             IsEnabled="False"
                             Clicked="ExportDataBtn_Clicked"
-                            HorizontalOptions="Fill"/>
+                            HorizontalOptions="Fill" />
                     </Grid>
                 </VerticalStackLayout>
             </VerticalStackLayout>

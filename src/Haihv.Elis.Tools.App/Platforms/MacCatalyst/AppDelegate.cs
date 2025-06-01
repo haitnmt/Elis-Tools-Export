@@ -2,11 +2,13 @@
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 
-namespace Haihv.Elis.Tools.App
+namespace Haihv.Elis.Tools.App;
+
+[Register("AppDelegate")]
+public class AppDelegate : MauiUIApplicationDelegate
 {
-    [Register("AppDelegate")]
-    public class AppDelegate : MauiUIApplicationDelegate
+    protected override MauiApp CreateMauiApp()
     {
-        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+        return MauiProgram.CreateMauiApp();
     }
 }

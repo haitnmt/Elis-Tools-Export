@@ -1,12 +1,11 @@
 ﻿using Microsoft.Maui.Controls;
 
-namespace Haihv.Elis.Tools.App
+namespace Haihv.Elis.Tools.App;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

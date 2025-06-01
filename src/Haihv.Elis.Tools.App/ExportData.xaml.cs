@@ -6,14 +6,14 @@ namespace Haihv.Elis.Tools.App;
 
 public partial class ExportData : ContentPage
 {
+    private readonly ConnectionInfo? _connectionInfo;
 
-	private readonly ConnectionInfo? _connectionInfo;
-	public ExportData(ConnectionService connectionService)
-	{
-		_connectionInfo = connectionService.ConnectionInfo;
+    public ExportData(ConnectionService connectionService)
+    {
+        _connectionInfo = connectionService.ConnectionInfo;
 
-		// Khởi tạo giao diện
-		InitializeComponent();
-		DataInfoLabel.Text = _connectionInfo?.RenderConnectionInfo() ?? "Chưa có thông tin kết nối";
-	}
+        // Khởi tạo giao diện
+        InitializeComponent();
+        DataInfoLabel.Text = _connectionInfo?.RenderConnectionInfo() ?? "Chưa có thông tin kết nối";
+    }
 }

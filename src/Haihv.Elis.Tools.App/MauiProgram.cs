@@ -7,38 +7,38 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 
-namespace Haihv.Elis.Tools.App
+namespace Haihv.Elis.Tools.App;
+
+public static class MauiProgram
 {
-    public static class MauiProgram
+    public static MauiApp CreateMauiApp()
     {
-        public static MauiApp CreateMauiApp()
-        {
-            var builder = MauiApp.CreateBuilder(); builder
-                .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            });
 
-            // Cấu hình Serilog để ghi log vào file
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(FileHelper.LogFile("app.log"), rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+        // Cấu hình Serilog để ghi log vào file
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File(FileHelper.LogFile("app.log"), rollingInterval: RollingInterval.Day)
+            .CreateLogger();
 
-            builder.Logging.AddSerilog(Log.Logger);
-            builder.Services.AddSingleton<ConnectionService>();
+        builder.Logging.AddSerilog(Log.Logger);
+        builder.Services.AddSingleton<ConnectionService>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<ExportData>();
+        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<ExportData>();
 
 #if DEBUG
-            builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
-        }
+        return builder.Build();
     }
 }
