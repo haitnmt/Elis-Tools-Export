@@ -1,5 +1,3 @@
-using Haihv.Elis.Tools.Data.Models;
-
 namespace Haihv.Elis.Tools.Maui.Extensions
 {
     /// <summary>
@@ -40,18 +38,28 @@ namespace Haihv.Elis.Tools.Maui.Extensions
         {
             try
             {
+                // Kiểm tra đường dẫn
+                if (string.IsNullOrWhiteSpace(filePath))
+                {
+                    throw new ArgumentException("Đường dẫn file không được rỗng", nameof(filePath));
+                }
+
                 // Tạo thư mục nếu chưa tồn tại
                 var directory = Path.GetDirectoryName(filePath);
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
-
+                
+                // Ghi file với timeout để tránh hang
                 await File.WriteAllTextAsync(filePath, content, cancellationToken);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi khi ghi file {filePath}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Lỗi không xác định: {filePath}");
+                System.Diagnostics.Debug.WriteLine($"   Type: {ex.GetType().Name}");
+                System.Diagnostics.Debug.WriteLine($"   Message: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"   StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -112,5 +120,26 @@ namespace Haihv.Elis.Tools.Maui.Extensions
                 return Task.FromResult($"File đã được lưu tại:\n{filePath}\n\nLỗi mở thư mục: {ex.Message}");
             }
         }
+        internal static string PathRootConfig(string folder = "", bool addDate = false)
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ElisExport");
+            if (!string.IsNullOrWhiteSpace(folder))
+            {
+                path = Path.Combine(path, folder);
+            }
+
+            if (addDate)
+            {
+                path = Path.Combine(path, DateTime.Now.ToString("yyyy-MM-dd"));
+            }
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            return path;
+        }
+        public static string LogFile(string fileName) => Path.Combine(PathRootConfig("Logs", true), fileName);
     }
 }

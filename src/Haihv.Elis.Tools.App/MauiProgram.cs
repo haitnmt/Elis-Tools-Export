@@ -1,7 +1,7 @@
-﻿using Haihv.Elis.Tools.App.Settings;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Serilog;
 using CommunityToolkit.Maui;
+using Haihv.Elis.Tools.Maui.Extensions;
 
 namespace Haihv.Elis.Tools.App
 {
@@ -21,7 +21,7 @@ namespace Haihv.Elis.Tools.App
             // Cấu hình Serilog để ghi log vào file
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File(FilePath.LogFile("app.log"), rollingInterval: RollingInterval.Day)
+                .WriteTo.File(FileHelper.LogFile("app.log"), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             builder.Logging.AddSerilog(Log.Logger);

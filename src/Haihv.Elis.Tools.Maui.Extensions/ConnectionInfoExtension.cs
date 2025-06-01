@@ -5,6 +5,8 @@ namespace Haihv.Elis.Tools.Maui.Extensions;
 
 public static class ConnectionInfoExtension
 {
+    private static string PathConnectionString =>
+        Path.Combine(FileHelper.PathRootConfig(), "ConnectionInfo.inf");
     /// <summary>
     /// Đọc thông tin kết nối từ file
     /// </summary>
@@ -12,7 +14,7 @@ public static class ConnectionInfoExtension
     /// <param name="encrypted">File có được mã hóa không</param>
     /// <param name="cancellationToken">Token hủy bỏ</param>
     /// <returns>Thông tin kết nối hoặc null nếu không đọc được</returns>
-    public static async Task<ConnectionInfo?> LoadConnectionInfoAsync(this string filePath, bool encrypted = true,
+    private static async Task<ConnectionInfo?> LoadConnectionInfoAsync(this string filePath, bool encrypted = true,
         CancellationToken cancellationToken = default)
     {
         try
@@ -28,14 +30,24 @@ public static class ConnectionInfoExtension
     }
 
     /// <summary>
+    /// Đọc thông tin kết nối từ file
+    /// </summary>
+    /// <param name="encrypted">File có được mã hóa không</param>
+    /// <param name="cancellationToken">Token hủy bỏ</param>
+    /// <returns>Thông tin kết nối hoặc null nếu không đọc được</returns>
+    public static async Task<ConnectionInfo?> LoadConnectionInfoAsync(bool encrypted = true,
+        CancellationToken cancellationToken = default)
+        => await LoadConnectionInfoAsync(PathConnectionString, encrypted, cancellationToken);
+
+    /// <summary>
     /// Lưu thông tin kết nối vào file
     /// </summary>
     /// <param name="connectionInfo">Thông tin kết nối</param>
-    /// <param name="filePath">Đường dẫn file</param>
+    /// <param name="filePath">Đường dẫn file để lưu thông tin kết nối</param>
     /// <param name="encrypted">Có mã hóa file không</param>
     /// <param name="cancellationToken">Token hủy bỏ</param>
     /// <returns>True nếu lưu thành công</returns>
-    public static async Task<(bool sucsess, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo,
+    private static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo, 
         string filePath, bool encrypted = true, CancellationToken cancellationToken = default)
     {
         try
@@ -52,8 +64,19 @@ public static class ConnectionInfoExtension
             return (false, $"Lỗi khi lưu thông tin kết nối: {ex.Message}");
         }
     }
+    
+    /// <summary>
+    /// Lưu thông tin kết nối vào file
+    /// </summary>
+    /// <param name="connectionInfo">Thông tin kết nối</param>
+    /// <param name="encrypted">Có mã hóa file không</param>
+    /// <param name="cancellationToken">Token hủy bỏ</param>
+    /// <returns>True nếu lưu thành công</returns>
+    public static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo, 
+        bool encrypted = true, CancellationToken cancellationToken = default)
+    => await SaveConnectionInfoAsync(connectionInfo, PathConnectionString, encrypted, cancellationToken);
 
-    public static async Task<(bool sucsess, string message)> CheckConnection(this ConnectionInfo connectionInfo)
+    public static async Task<(bool success, string message)> CheckConnection(this ConnectionInfo connectionInfo)
     {
         try
         {
@@ -100,17 +123,8 @@ public static class ConnectionInfoExtension
             }
             
             // Nếu vẫn không thành công, thử cả hai phương thức (fallback)
-            if (importedConnection == null)
-            {
-                // Thử mã hóa trước
-                importedConnection = await LoadConnectionInfoAsync(filePath, encrypted: true);
-                
-                // Nếu không được, thử không mã hóa
-                if (importedConnection == null)
-                {
-                    importedConnection = await LoadConnectionInfoAsync(filePath, encrypted: false);
-                }
-            }
+            importedConnection ??= await LoadConnectionInfoAsync(filePath) ??
+                                   await LoadConnectionInfoAsync(filePath, encrypted: false);
 
             if (importedConnection != null && importedConnection.IsValid())
             {
@@ -125,7 +139,8 @@ public static class ConnectionInfoExtension
         }
     }
 
-    public static async Task<(bool sucsess, string message)> ExportConnectionSettings(this ConnectionInfo? connectionInfo, string? filePath = null)
+    public static async Task<(bool success, string message)> ExportConnectionSettings(this ConnectionInfo? connectionInfo, 
+        string? filePath = null, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -150,12 +165,9 @@ public static class ConnectionInfoExtension
             }
             
             // Lưu thông tin kết nối vào file (có mã hóa)
-            var success = await connectionInfo.SaveConnectionInfoAsync(file, encrypted: true);
-            
-            return success.sucsess
-                ? (true, file)
-                : (false, success.messager);
-            
+            var (success, message) = await connectionInfo.SaveConnectionInfoAsync(file, encrypted: true, cancellationToken);
+            return (success, success? file : $"Lỗi khi xuất thông tin kết nối: {message}");
+
         }
         catch (Exception ex)
         {

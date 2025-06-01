@@ -74,7 +74,7 @@
                         Placeholder="Mật khẩu truy cập"/>
                     <Grid
                         HorizontalOptions="Fill"
-                        ColumnDefinitions="*,*"
+                        ColumnDefinitions="*,*,*"
                         ColumnSpacing="15"
                         Margin="0,15,0,0">
                         <Button
@@ -83,57 +83,24 @@
                             Text="Kiểm tra Kết nối"
                             SemanticProperties.Hint="Kiểm tra kết nối đến cơ sở dữ liệu"
                             Clicked="CheckConnectionBtn_Clicked"
-                            BackgroundColor="{StaticResource Info}"
-                            TextColor="White"
                             HorizontalOptions="Fill"/>
                         <Button
-                            x:Name="SaveConnectionBtn"
+                            x:Name="ImportDataBtn"
                             Grid.Column="1"
-                            Text="Lưu Kết nối"
+                            Text="Mở tệp Kết nối"
+                            SemanticProperties.Hint="Import thông tin kết nối từ file"
+                            Clicked="ImportDataBtn_Clicked"
+                            HorizontalOptions="Fill"/>
+                        <Button
+                            x:Name="ExportDataBtn"
+                            Grid.Column="2"
+                            Text="Chia sẻ tệp Kết nối"
+                            SemanticProperties.Hint="Export thông tin kết nối ra file JSON"
                             IsEnabled="False"
-                            SemanticProperties.Hint="Lưu thông tin kết nối"
-                            Clicked="SaveConnectionBtn_Clicked"
+                            Clicked="ExportDataBtn_Clicked"
                             HorizontalOptions="Fill"/>
                     </Grid>
                 </VerticalStackLayout>
-            </VerticalStackLayout>
-
-            <BoxView
-                HeightRequest="1"
-                Color="Gray"
-                HorizontalOptions="Fill"
-                Margin="0,20"/>
-            <VerticalStackLayout
-                Spacing="10">
-                <Label
-                    Text="Quản lý thông tin kết nối"
-                    Style="{StaticResource SubHeadline}"
-                    SemanticProperties.HeadingLevel="Level3"/>
-
-                <Grid
-                    HorizontalOptions="Fill"
-                    ColumnDefinitions="*,*"
-                    ColumnSpacing="15"
-                    Margin="0,10,0,0">
-                    <Button
-                        x:Name="ImportDataBtn"
-                        Grid.Column="0"
-                        Text="Import Kết nối"
-                        SemanticProperties.Hint="Import thông tin kết nối từ file JSON"
-                        Clicked="ImportDataBtn_Clicked"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        HorizontalOptions="Fill"/>
-                    <Button
-                        x:Name="ExportDataBtn"
-                        Grid.Column="1"
-                        Text="Export Kết nối"
-                        SemanticProperties.Hint="Export thông tin kết nối ra file JSON"
-                        Clicked="ExportDataBtn_Clicked"
-                        BackgroundColor="{StaticResource Secondary}"
-                        TextColor="White"
-                        HorizontalOptions="Fill"/>
-                </Grid>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
