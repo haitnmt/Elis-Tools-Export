@@ -1,6 +1,9 @@
 ﻿using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
+using Haihv.Elis.Tools.App.Extensions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Haihv.Elis.Tools.App;
 
@@ -134,16 +137,19 @@ public partial class MainPage
         {
             // Vô hiệu hóa nút Export khi đang import
             ExportDataBtn.IsEnabled = false;
+            
             // Sử dụng cách tiếp cận đơn giản hơn cho file picker
             var pickOptions = new PickOptions
             {
-                PickerTitle = "Chọn file thông tin kết nối"
+                PickerTitle = "Chọn file thông tin kết nối để import"
             };
 
             var result = await FilePicker.Default.PickAsync(pickOptions);
             if (result != null)
-                // Đọc thông tin kết nối từ file (tự động thử cả mã hóa và không mã hóa)
+            {
+                // Thử import mà không cần mật khẩu trước
                 await ProcessConnectionImport(result.FullPath);
+            }
         }
         catch (Exception ex)
         {
@@ -151,12 +157,12 @@ public partial class MainPage
 
             // Xử lý các lỗi cụ thể
             if (ex.Message.Contains("This platform does not support this file type"))
-                errorMessage = "File type không được hỗ trợ. Vui lòng chọn file .inf, .json hoặc .txt";
+                errorMessage = "Định dạng file không được hỗ trợ. Vui lòng chọn file .inf, .json hoặc .txt";
             else if (ex.Message.Contains("No file was selected"))
                 // Người dùng hủy chọn file, không cần hiển thị thông báo lỗi
                 return;
 
-            await DisplayAlert("Lỗi", $"Không thể import thông tin kết nối: {errorMessage}", "OK");
+            await DisplayAlert("Lỗi import", $"Không thể import thông tin kết nối:\n{errorMessage}", "OK");
         }
     }
 
@@ -164,22 +170,89 @@ public partial class MainPage
     {
         try
         {
-            var (importedConnection, message) = await filePath.ImportConnectionSettings();
+            // Thử import mà không cần mật khẩu trước (file không mã hóa)
+            var (importedConnection, message) = await filePath.ImportConnectionSettings(string.Empty);
+            if (importedConnection is not null)
+            {
+                // Import thành công mà không cần mật khẩu
+                _connectionInfo = importedConnection;
+                UpdateConnectionInfoUi();
+                await SaveConnection();
+                await DisplayAlert("✅ Import thành công", 
+                    "Đã import thông tin kết nối từ file không mã hóa thành công!", "OK");
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            // Nếu thất bại, có thể file được mã hóa, yêu cầu nhập mật khẩu
+        }
+
+        // Nếu không import được mà không có mật khẩu, file có thể được mã hóa
+        await RequestPasswordAndImport(filePath);
+    }
+
+    private async Task RequestPasswordAndImport(string filePath)
+    {
+        while (true)
+        {
+            // Yêu cầu nhập mật khẩu mã hóa với ký tự ẩn (****)
+            var secretKey = await this.DisplayPasswordPromptAsync(
+                "🔒 Nhập mật khẩu giải mã", 
+                "File được mã hóa. Vui lòng nhập mật khẩu để giải mã file kết nối:");
+            
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                await DisplayAlert("Hủy import", "Bạn đã hủy việc import file kết nối!", "OK");
+                return;
+            }
+            
+            // Thử import với mật khẩu đã nhập
+            var success = await TryImportWithPassword(filePath, secretKey);
+            if (success)
+                break;
+            
+            // Nếu mật khẩu sai, tiếp tục vòng lặp để nhập lại
+        }
+    }
+
+    private async Task<bool> TryImportWithPassword(string filePath, string secretKey)
+    {
+        try
+        {
+            // Sử dụng mật khẩu mã hóa khi import thông tin kết nối
+            var (importedConnection, message) = await filePath.ImportConnectionSettings(secretKey);
             if (importedConnection is not null)
             {
                 _connectionInfo = importedConnection;
                 // Cập nhật UI với thông tin kết nối đã import
                 UpdateConnectionInfoUi();
                 await SaveConnection();
+                
+                await DisplayAlert("✅ Import thành công",
+                    "Đã import và giải mã thông tin kết nối thành công!", "OK");
+                return true;
             }
-
-            await DisplayAlert("Thông báo",
-                string.IsNullOrEmpty(message) ? "Tệp thông tin kết nối chính xác!" : $"Import thành công!\n{message}",
-                "OK");
+            else
+            {
+                await DisplayAlert("❌ Mật khẩu không chính xác", 
+                    "Không thể giải mã file với mật khẩu đã nhập.\nVui lòng kiểm tra lại mật khẩu!", "Thử lại");
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Lỗi", $"Không thể đọc thông tin kết nối từ file: {ex.Message}", "OK");
+            if (ex.Message.Contains("password") || ex.Message.Contains("decrypt") || ex.Message.Contains("mã hóa"))
+            {
+                await DisplayAlert("❌ Mật khẩu không chính xác", 
+                    "Mật khẩu giải mã không đúng. Vui lòng thử lại!", "Thử lại");
+                return false;
+            }
+            else
+            {
+                await DisplayAlert("❌ Lỗi import", $"Không thể đọc thông tin kết nối từ file:\n{ex.Message}", "OK");
+                return false;
+            }
         }
     }
 
@@ -187,19 +260,65 @@ public partial class MainPage
     {
         try
         {
-            // Lưu thông tin kết nối vào file (có mã hóa)
-            var (success, message) = await _connectionInfo.ExportConnectionSettings();
+            string secretKey = string.Empty;
+            
+            // Hiển thị dialog để tùy chọn mật khẩu
+            var passwordChoice = await DisplayAlert("Tùy chọn bảo mật", 
+                "Bạn có muốn mã hóa file kết nối để bảo mật thông tin không?", 
+                "Có, mã hóa file", "Không, xuất bình thường");
+            
+            if (passwordChoice)
+            {
+                // Người dùng chọn tạo mật khẩu - hiển thị dialog tạo mật khẩu
+                var createPasswordChoice = await DisplayAlert("Chọn cách tạo mật khẩu", 
+                    "Bạn muốn tự nhập mật khẩu hay để hệ thống tạo ngẫu nhiên?", 
+                    "Tạo ngẫu nhiên", "Tự nhập");
+                
+                if (createPasswordChoice)
+                {
+                    // Tạo mật khẩu ngẫu nhiên
+                    secretKey = GenerateRandomPassword();
+                    
+                    // Hiển thị mật khẩu để người dùng biết và lưu lại
+                    await DisplayAlert("Mật khẩu được tạo", 
+                        $"Mật khẩu mã hóa đã được tạo:\n\n{secretKey}\n\n⚠️ Hãy lưu lại mật khẩu này để sử dụng khi import file!", 
+                        "Đã lưu");
+                }
+                else
+                {
+                    // Yêu cầu người dùng nhập mật khẩu
+                    secretKey = await DisplayPromptAsync("Tạo mật khẩu mã hóa", 
+                        "Vui lòng nhập mật khẩu để mã hóa file:", 
+                        "Mã hóa", "Hủy", 
+                        placeholder: "Nhập mật khẩu mã hóa");
+                    
+                    if (string.IsNullOrWhiteSpace(secretKey))
+                    {
+                        await DisplayAlert("Hủy mã hóa", "Bạn đã hủy việc tạo mật khẩu. File sẽ được xuất không mã hóa.", "OK");
+                        secretKey = string.Empty;
+                    }
+                }
+            }
+            
+            // Lưu thông tin kết nối vào file (có mã hóa nếu người dùng đã nhập mật khẩu)
+            var (success, message) = string.IsNullOrEmpty(secretKey) 
+                ? await _connectionInfo.ExportConnectionSettings() 
+                : await _connectionInfo.ExportConnectionSettings(secretKey);
 
             if (!success)
             {
-                await DisplayAlert("Lỗi", message, "OK");
+                await DisplayAlert("Lỗi export", $"Không thể xuất file:\n{message}", "OK");
                 return;
             }
 
             // Thông báo lưu thành công và hỏi có muốn chia sẻ không
-            var shareChoice = await DisplayAlert("Thông báo",
-                $"Xuất tệp thành công, tại vị trí:\n{message}\n\nBạn có muốn chia sẻ file này không?",
-                "Chia sẻ", "Mở vị trí file");
+            var exportMessage = string.IsNullOrEmpty(secretKey) 
+                ? "Xuất file thành công!" 
+                : "Xuất file đã mã hóa thành công!";
+                
+            var shareChoice = await DisplayAlert("Export thành công",
+                $"{exportMessage}\n\nVị trí file: {message}\n\nBạn có muốn chia sẻ file này không?",
+                "Chia sẻ", "Mở thư mục");
 
             if (shareChoice)
                 // Người dùng chọn chia sẻ
@@ -214,7 +333,24 @@ public partial class MainPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Lỗi", $"Không thể export thông tin kết nối: {ex.Message}", "OK");
+            await DisplayAlert("Lỗi export", $"Không thể export thông tin kết nối:\n{ex.Message}", "OK");
         }
     }
+
+    // Phương thức tạo mật khẩu ngẫu nhiên
+    private string GenerateRandomPassword()
+    {
+        // Tạo một chuỗi mật khẩu ngẫu nhiên 16 ký tự gồm chữ và số
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder stringBuilder = new();
+        var random = Random.Shared;
+        
+        for (int i = 0; i < 16; i++)
+        {
+            stringBuilder.Append(chars[random.Next(chars.Length)]);
+        }
+        
+        return stringBuilder.ToString();
+    }
 }
+

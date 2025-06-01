@@ -80,6 +80,16 @@ public static class EncryptionHelper
         return plainText.Encrypt(Key, Iv);
     }
 
+    /// <summary>
+    /// Mã hóa một chuỗi văn bản thành chuỗi Base64.
+    /// </summary>
+    /// <param name="plainText">Chuỗi văn bản cần mã hóa.</param>
+    /// <param name="secretKey"></param>
+    /// <returns>Chuỗi đã được mã hóa dưới dạng Base64.</returns>
+    public static string Encrypt(this string plainText, string secretKey)
+    {
+        return plainText.Encrypt(secretKey, Iv);
+    }
     private static string Decrypt(this string cipherText, string secretKey, string iv, int keySize = 256)
     {
         using var aesAlg = Aes.Create();
@@ -100,5 +110,17 @@ public static class EncryptionHelper
     public static string Decrypt(this string cipherText)
     {
         return cipherText.Decrypt(Key, Iv);
+    }
+
+    /// <summary>
+    /// Giải mã một chuỗi Base64 thành chuỗi văn bản.
+    /// </summary>
+    /// <param name="cipherText">Chuỗi Base64 cần giải mã.</param>
+    /// <param name="secretKey">Khóa bí mật để giải mã.</param>
+    /// <returns>Chuỗi văn bản đã được giải mã.</returns>
+    public static string Decrypt(this string cipherText, string secretKey)
+    {
+        // Sử dụng khóa bí mật để giải mã
+        return cipherText.Decrypt(secretKey, Iv);
     }
 }

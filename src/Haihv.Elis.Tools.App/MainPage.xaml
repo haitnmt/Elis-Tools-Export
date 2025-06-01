@@ -73,6 +73,7 @@
                         IsPassword="True"
                         Text="1234567"
                         Placeholder="Mật khẩu truy cập" />
+                    
                     <Grid
                         HorizontalOptions="Fill"
                         ColumnDefinitions="*,*,*"
@@ -107,3 +108,4 @@
     </ScrollView>
 
 </ContentPage>
+
