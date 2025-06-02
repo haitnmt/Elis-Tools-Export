@@ -140,7 +140,12 @@ public partial class ShareConnectionPage : ContentPage
                     secretKey = ManualPasswordEntry.Text?.Trim() ?? string.Empty;
                     if (string.IsNullOrWhiteSpace(secretKey))
                     {
-                        await DisplayAlert("Lỗi", "Vui lòng nhập mật khẩu!", "OK");
+                        await DisplayAlert("Thông báo", "Vui lòng nhập mật khẩu!", "OK");
+                        return;
+                    }
+                    if (secretKey.Length < 12)
+                    {
+                        await DisplayAlert("Thông báo", "Vui lòng nhập mật khẩu dài hơn 12 ký tự", "OK");
                         return;
                     }
                 }

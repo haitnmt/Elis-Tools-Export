@@ -35,6 +35,8 @@ public static class EncryptionHelper
 
         if (string.IsNullOrEmpty(password))
             throw new ArgumentException("Mật khẩu không được để trống", nameof(password));
+        if (password.Length < 12)
+            throw new ArgumentException("Mật khẩu phải có ít nhất 12 ký tự", nameof(password));
 
         // Tạo salt ngẫu nhiên cho mỗi lần mã hóa
         byte[] salt = new byte[32]; // 256 bits

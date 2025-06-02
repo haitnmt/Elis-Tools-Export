@@ -51,6 +51,7 @@
                             <Grid ColumnDefinitions="*,Auto">
                                 <Entry x:Name="AutoPasswordEntry"
                                        Grid.Column="0"
+                                       IsPassword="True"
                                        IsReadOnly="True"
                                        FontFamily="Consolas"
                                        Placeholder="Mật khẩu sẽ được tạo tự động"/>
@@ -63,6 +64,7 @@
 
                         <!-- Mật khẩu thủ công -->
                         <Entry x:Name="ManualPasswordEntry"
+                               IsPassword="True"
                                Placeholder="Nhập mật khẩu mã hóa"
                                IsVisible="False"/>
                     </StackLayout>
