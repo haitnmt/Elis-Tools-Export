@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Haihv.Elis.Tools.App.Controls.ShareConnectionControl">
+    <VerticalStackLayout Spacing="15"
+                         Padding="20">
+
+        <!-- Tùy chọn mã hóa -->
+        <StackLayout x:Name="EncryptionOptionsLayout"
+                     Spacing="10">
+            <Label Text="Tùy chọn bảo mật:"
+                   FontSize="16"
+                   FontAttributes="Bold"/>
+
+            <StackLayout Orientation="Horizontal"
+                         Spacing="10">
+                <CheckBox x:Name="EncryptCheckBox"/>
+                <Label Text="Mã hóa tệp kết nối"
+                       VerticalOptions="Center"/>
+            </StackLayout>
+        </StackLayout>
+
+        <!-- Phần tạo mật khẩu -->
+        <StackLayout x:Name="PasswordLayout"
+                     Spacing="10"
+                     IsVisible="False">
+            <Label Text="Mật khẩu mã hóa:"
+                   FontSize="16"
+                   FontAttributes="Bold"/>
+
+            <StackLayout Orientation="Horizontal"
+                         Spacing="10">
+                <RadioButton x:Name="AutoPasswordRadio"
+                             Content="Tạo tự động"
+                             IsChecked="True"/>
+                <RadioButton x:Name="ManualPasswordRadio"
+                             Content="Nhập thủ công"/>
+            </StackLayout>
+            <!-- Mật khẩu tự động -->
+            <StackLayout x:Name="AutoPasswordLayout"
+                         Spacing="5">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry x:Name="AutoPasswordEntry"
+                           Grid.Column="0"
+                           IsReadOnly="True"
+                           FontFamily="Consolas"
+                           Placeholder="Mật khẩu sẽ được tạo tự động"/>
+                    <Button x:Name="CopyPasswordBtn"
+                            Grid.Column="1"
+                            Text="📋 Copy"
+                            Clicked="CopyPasswordBtn_Clicked"/>
+                </Grid>
+            </StackLayout>
+            <!-- Mật khẩu thủ công -->
+            <Entry x:Name="ManualPasswordEntry"
+                   Placeholder="Nhập mật khẩu mã hóa"
+                   IsVisible="False"/>
+        </StackLayout>
+        <!-- Nút thực hiện -->
+        <Grid ColumnDefinitions="*,*"
+              ColumnSpacing="10"
+              Margin="0,20,0,0">
+            <Button x:Name="CancelBtn"
+                    Grid.Column="0"
+                    Text="Hủy"
+                    Clicked="CancelBtn_Clicked"
+                    BackgroundColor="Gray"/>
+            <Button x:Name="SaveBtn"
+                    Grid.Column="1"
+                    Text="Lưu tệp"
+                    Clicked="SaveBtn_Clicked"
+                    BackgroundColor="Blue"/>
+        </Grid>
+
+        <!-- Checkbox tự động mở thư mục -->
+        <StackLayout Orientation="Horizontal"
+                     Spacing="10"
+                     Margin="0,5,0,0">
+            <CheckBox x:Name="AutoOpenFolderCheckBox"
+                      IsChecked="True"/>
+            <Label Text="Tự động mở thư mục sau khi lưu"
+                   VerticalOptions="Center"/>
+        </StackLayout>
+
+        <!-- Kết quả -->
+        <StackLayout x:Name="ResultLayout"
+                     Spacing="10"
+                     IsVisible="False">
+            <Label Text="✅ Lưu tệp thành công!"
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   TextColor="Green"
+                   HorizontalOptions="Center"/>
+            <Border BackgroundColor="LightGray"
+                    Padding="10"
+                    Stroke="Gray"
+                    StrokeThickness="1">
+                <StackLayout Spacing="5">
+                    <Label Text="Vị trí tệp:"
+                           FontAttributes="Bold"/>
+                    <Label x:Name="FilePathLabel"
+                           FontFamily="Consolas"
+                           TextColor="Blue"/>
+                </StackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="10">
+                <Button x:Name="OpenLocationBtn"
+                        Grid.Column="0"
+                        Text="📁 Mở thư mục"
+                        Clicked="OpenLocationBtn_Clicked"/>
+                <Button x:Name="CloseBtn"
+                        Grid.Column="1"
+                        Text="Đóng"
+                        Clicked="CloseBtn_Clicked"/>
+            </Grid>
+        </StackLayout>
+
+    </VerticalStackLayout>
+</ContentView>

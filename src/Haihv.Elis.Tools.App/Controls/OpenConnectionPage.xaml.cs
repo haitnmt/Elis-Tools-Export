@@ -1,16 +1,16 @@
 namespace Haihv.Elis.Tools.App.Controls;
 
-public partial class PasswordPromptPage : ContentPage
+public partial class OpenConnectionPage : ContentPage
 {
     private TaskCompletionSource<string?> _taskCompletionSource;
 
-    public PasswordPromptPage(string title, string message)
+    public OpenConnectionPage(string title, string message)
     {
         InitializeComponent();
         TitleLabel.Text = title;
         MessageLabel.Text = message;
         _taskCompletionSource = new TaskCompletionSource<string?>();
-        
+
         // Focus vào password entry khi page được hiển thị
         this.Loaded += (s, e) => PasswordEntry.Focus();
     }

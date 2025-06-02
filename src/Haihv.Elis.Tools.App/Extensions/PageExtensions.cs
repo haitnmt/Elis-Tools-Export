@@ -13,7 +13,7 @@ public static class PageExtensions
     /// <returns>Mật khẩu đã nhập hoặc null nếu hủy</returns>
     public static async Task<string?> DisplayPasswordPromptAsync(this Page page, string title, string message)
     {
-        var passwordPrompt = new PasswordPromptPage(title, message);
+        var passwordPrompt = new OpenConnectionPage(title, message);
         await page.Navigation.PushModalAsync(passwordPrompt);
         return await passwordPrompt.GetPasswordAsync();
     }

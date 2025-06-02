@@ -109,7 +109,7 @@ namespace Haihv.Elis.Tools.Maui.Extensions
                 #if WINDOWS
                             // Mở Windows Explorer và highlight file
                             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{filePath}\"");
-                            return string.Empty;
+                            return Task.FromResult(string.Empty);
                 #elif MACCATALYST
                             // Mở Finder và highlight file
                             System.Diagnostics.Process.Start("open", $"-R \"{filePath}\"");
