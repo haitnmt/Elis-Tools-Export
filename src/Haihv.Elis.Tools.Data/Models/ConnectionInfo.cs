@@ -11,11 +11,11 @@ public sealed class ConnectionInfo
 
     public string Username { get; set; } = "sa";
 
-    public string Password { get;set; } = "123456";
+    public string Password { get; set; } = "123456";
 
     public bool UseIntegratedSecurity { get; set; }
     public int ConnectTimeout { get; set; } = 10;
-    
+
     public string ToConnectionString()
     {
         var builder = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder
@@ -43,14 +43,13 @@ public sealed class ConnectionInfo
     public bool IsValid()
     {
         return !string.IsNullOrEmpty(Server) && !string.IsNullOrEmpty(Database);
-    }
-    /// <summary>
-    /// Deserialize chuỗi JSON thành đối tượng ConnectionInfo.
-    /// </summary>
-    /// <param name="json">Chuỗi JSON chứa thông tin kết nối.</param>
-    /// <param name="secretKey">Khóa bí mật để giải mã thông tin kết nối (nếu cần).</param>
-    /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
-    /// <returns></returns>
+    }    /// <summary>
+         /// Deserialize chuỗi JSON thành đối tượng ConnectionInfo.
+         /// </summary>
+         /// <param name="json">Chuỗi JSON chứa thông tin kết nối.</param>
+         /// <param name="secretKey">Khóa bí mật để giải mã thông tin kết nối (nếu cần).</param>
+         /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
+         /// <returns></returns>
     public static ConnectionInfo? DeserializeConnectionInfo(string json, string? secretKey = null, bool encrypted = true)
     {
         if (string.IsNullOrEmpty(json))
@@ -58,12 +57,13 @@ public sealed class ConnectionInfo
 
         try
         {
-            // Nếu có khóa bí mật, giải mã thông tin kết nối
+            // Nếu có khóa bí mật, sử dụng mã hóa mạnh với mật khẩu
             if (!string.IsNullOrWhiteSpace(secretKey))
             {
-                return JsonSerializer.Deserialize<ConnectionInfo>(json.Decrypt(secretKey));
+                var decryptedJson = EncryptionHelper.DecryptWithPassword(json, secretKey);
+                return JsonSerializer.Deserialize<ConnectionInfo>(decryptedJson);
             }
-            // Nếu không có khóa bí mật, kiểm tra xem thông tin kết nối có được mã hóa hay không
+            // Nếu không có khóa bí mật, sử dụng mã hóa mặc định
             if (encrypted)
             {
                 json = json.Decrypt();
@@ -82,14 +82,13 @@ public sealed class ConnectionInfo
     private static readonly JsonSerializerOptions SWriteOptions = new()
     {
         WriteIndented = true
-    };
-    /// <summary>
-    /// Serialize thông tin kết nối thành chuỗi JSON.
-    /// </summary>
-    /// <param name="connectionInfo">Thông tin kết nối cần serialize.</param>
-    /// <param name="secretKey">Khóa bí mật để mã hóa thông tin kết nối (nếu cần).</param>
-    /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
-    /// <returns></returns>
+    };    /// <summary>
+          /// Serialize thông tin kết nối thành chuỗi JSON.
+          /// </summary>
+          /// <param name="connectionInfo">Thông tin kết nối cần serialize.</param>
+          /// <param name="secretKey">Khóa bí mật để mã hóa thông tin kết nối (nếu cần).</param>
+          /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
+          /// <returns></returns>
     public static string Serialize(ConnectionInfo connectionInfo, string? secretKey = null, bool encrypted = true)
     {
         ArgumentNullException.ThrowIfNull(connectionInfo);
@@ -100,7 +99,7 @@ public sealed class ConnectionInfo
             // Mã hóa thông tin kết nối nếu cần
             if (!string.IsNullOrWhiteSpace(secretKey))
             {
-               return json.Encrypt(secretKey);
+                return EncryptionHelper.EncryptWithPassword(json, secretKey);
             }
 
             return encrypted ? json.Encrypt() : json;
