@@ -13,26 +13,40 @@ public partial class ShareConnectionPage : ContentPage
     {
         InitializeComponent();
         SetupEventHandlers();
+        InitializeDefaultState();
     }
 
     public ShareConnectionPage(ConnectionInfo connectionInfo) : this()
     {
         _connectionInfo = connectionInfo;
     }
+    private void InitializeDefaultState()
+    {
+        // Mặc định sử dụng mã hóa, hiển thị phần mật khẩu
+        PasswordLayout.IsVisible = true;
+        UpdatePasswordLayoutVisibility();
+
+        // Tự động tạo password khi khởi tạo
+        if (AutoPasswordRadio.IsChecked)
+        {
+            GeneratePassword();
+        }
+    }
     private void SetupEventHandlers()
     {
-        EncryptCheckBox.CheckedChanged += EncryptCheckBox_CheckedChanged;
+        NoEncryptCheckBox.CheckedChanged += NoEncryptCheckBox_CheckedChanged;
         AutoPasswordRadio.CheckedChanged += PasswordRadio_CheckedChanged;
         ManualPasswordRadio.CheckedChanged += PasswordRadio_CheckedChanged;
     }
 
-    private void EncryptCheckBox_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    private void NoEncryptCheckBox_CheckedChanged(object? sender, CheckedChangedEventArgs e)
     {
-        PasswordLayout.IsVisible = e.Value;
+        // Logic đảo ngược: khi checkbox "không mã hóa" được chọn thì ẩn phần mật khẩu
+        PasswordLayout.IsVisible = !e.Value;
         UpdatePasswordLayoutVisibility();
 
-        // Tự động tạo password khi bật encryption và chọn auto
-        if (e.Value && AutoPasswordRadio.IsChecked)
+        // Tự động tạo password khi bỏ chọn "không mã hóa" (tức là sẽ mã hóa) và chọn auto
+        if (!e.Value && AutoPasswordRadio.IsChecked)
         {
             GeneratePassword();
         }
@@ -48,10 +62,10 @@ public partial class ShareConnectionPage : ContentPage
             GeneratePassword();
         }
     }
-
     private void UpdatePasswordLayoutVisibility()
     {
-        if (!EncryptCheckBox.IsChecked)
+        // Logic đảo ngược: nếu checkbox "không mã hóa" được chọn thì ẩn các option mật khẩu
+        if (NoEncryptCheckBox.IsChecked)
         {
             AutoPasswordLayout.IsVisible = false;
             ManualPasswordEntry.IsVisible = false;
@@ -107,11 +121,10 @@ public partial class ShareConnectionPage : ContentPage
         try
         {
             SaveBtn.IsEnabled = false;
-            SaveBtn.Text = "Đang xử lý...";
+            SaveBtn.Text = "Đang xử lý..."; string secretKey = string.Empty;
 
-            string secretKey = string.Empty;
-
-            if (EncryptCheckBox.IsChecked)
+            // Logic mới: mặc định mã hóa, chỉ không mã hóa khi NoEncryptCheckBox được chọn
+            if (!NoEncryptCheckBox.IsChecked)
             {
                 if (AutoPasswordRadio.IsChecked)
                 {
@@ -131,9 +144,7 @@ public partial class ShareConnectionPage : ContentPage
                         return;
                     }
                 }
-            }
-
-            // Tạo tệp vào thư mục Downloads
+            }            // Tạo tệp vào thư mục Downloads - mã hóa khi secretKey có giá trị, không mã hóa khi rỗng
             var (success, filePath) = string.IsNullOrEmpty(secretKey)
                 ? await _connectionInfo.ExportConnectionSettings()
                 : await _connectionInfo.ExportConnectionSettings(secretKey);
@@ -142,7 +153,9 @@ public partial class ShareConnectionPage : ContentPage
             {
                 await DisplayAlert("Lỗi", $"Không thể tạo tệp: {filePath}", "OK");
                 return;
-            }            // Hiển thị kết quả
+            }
+
+            // Hiển thị kết quả
             ShowResult(filePath, !string.IsNullOrEmpty(secretKey));
         }
         catch (Exception ex)
