@@ -9,12 +9,12 @@
     <TabBar>
         <ShellContent
         Title="Trang chủ"
-        Icon="home.png"
+        Icon="home_tab.png"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage"/>
         <ShellContent
         Title="Xuất dữ liệu XML VBDLIS"
-        Icon="download.png"
+        Icon="download_tab.png"
         ContentTemplate="{DataTemplate local:ExportDataToXml}"
         Route="ExportData"/>
     </TabBar>
