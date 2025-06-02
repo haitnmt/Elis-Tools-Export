@@ -2,7 +2,6 @@
 using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
-using System.Text;
 
 namespace Haihv.Elis.Tools.App;
 
@@ -153,11 +152,9 @@ public partial class MainPage
                string.Equals(info1.Database, info2.Database, StringComparison.OrdinalIgnoreCase) &&
                string.Equals(info1.Username, info2.Username, StringComparison.Ordinal) &&
                string.Equals(info1.Password, info2.Password, StringComparison.Ordinal);
-    }
-
-    /// <summary>
-    /// Tạo bản sao của ConnectionInfo
-    /// </summary>
+    }    /// <summary>
+         /// Tạo bản sao của ConnectionInfo
+         /// </summary>
     private static ConnectionInfo CloneConnectionInfo(ConnectionInfo original)
     {
         return new ConnectionInfo
@@ -167,7 +164,8 @@ public partial class MainPage
             Username = original.Username,
             Password = original.Password,
             UseIntegratedSecurity = original.UseIntegratedSecurity,
-            ConnectTimeout = original.ConnectTimeout
+            ConnectTimeout = original.ConnectTimeout,
+            ExpiryDate = original.ExpiryDate
         };
     }
 
@@ -203,9 +201,6 @@ public partial class MainPage
     {
         try
         {
-            // Vô hiệu hóa nút Export khi đang mở tệp
-            ShareConnectionBtn.IsEnabled = false;
-
             // Sử dụng cách tiếp cận đơn giản hơn cho file picker
             var pickOptions = new PickOptions
             {
@@ -257,19 +252,27 @@ public partial class MainPage
         // Nếu không mở được mà không có mật khẩu, tệp có thể được mã hóa
         await RequestPasswordAndOpen(filePath);
     }
-
     private async Task RequestPasswordAndOpen(string filePath)
     {
+        // Thử đọc thông tin cơ bản từ file để kiểm tra hết hạn
+        ConnectionInfo? previewConnection = await TryGetConnectionPreview(filePath);
+
         while (true)
         {
             // Yêu cầu nhập mật khẩu mã hóa với ký tự ẩn (****)
-            var secretKey = await this.DisplayPasswordPromptAsync(
-                "🔒 Nhập mật khẩu giải mã",
-                "Tệp được mã hóa. Vui lòng nhập mật khẩu để giải mã tệp kết nối:");
+            var secretKey = previewConnection != null
+                ? await this.DisplayPasswordPromptAsync(
+                    "🔒 Nhập mật khẩu giải mã",
+                    "Tệp được mã hóa. Vui lòng nhập mật khẩu để giải mã tệp kết nối:",
+                    previewConnection)
+                : await this.DisplayPasswordPromptAsync(
+                    "🔒 Nhập mật khẩu giải mã",
+                    "Tệp được mã hóa. Vui lòng nhập mật khẩu để giải mã tệp kết nối:");
 
             if (string.IsNullOrWhiteSpace(secretKey))
             {
-                await DisplayAlert("Hủy mở tệp", "Bạn đã hủy việc mở tệp kết nối!", "OK"); return;
+                await DisplayAlert("Hủy mở tệp", "Bạn đã hủy việc mở tệp kết nối!", "OK");
+                return;
             }
 
             // Thử mở với mật khẩu đã nhập
@@ -318,7 +321,6 @@ public partial class MainPage
             }
         }
     }
-
     private async void ShareConnectionFileBtn_Clicked(object sender, EventArgs e)
     {
         try
@@ -329,6 +331,35 @@ public partial class MainPage
         catch (Exception ex)
         {
             await DisplayAlert("Lỗi", $"Không thể mở trang chia sẻ: {ex.Message}", "OK");
+        }
+    }
+
+    /// <summary>
+    /// Thử đọc thông tin preview từ file để kiểm tra hết hạn (không cần mật khẩu)
+    /// </summary>
+    private static async Task<ConnectionInfo?> TryGetConnectionPreview(string filePath)
+    {
+        try
+        {
+            // Thử đọc file như JSON không mã hóa trước
+            var content = await File.ReadAllTextAsync(filePath);
+            if (string.IsNullOrWhiteSpace(content))
+                return null;
+
+            // Kiểm tra xem có phải JSON hợp lệ không
+            try
+            {
+                return ConnectionInfo.DeserializeConnectionInfo(content, encrypted: false);
+            }
+            catch
+            {
+                // File bị mã hóa, không thể đọc preview
+                return null;
+            }
+        }
+        catch
+        {
+            return null;
         }
     }
 }

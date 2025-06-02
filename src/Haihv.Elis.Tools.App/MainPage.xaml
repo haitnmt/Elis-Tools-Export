@@ -82,21 +82,21 @@
                         <Button
                             x:Name="CheckConnectionBtn"
                             Grid.Column="0"
-                            Text="Kiểm tra Kết nối"
+                            Text="✅ Kiểm tra Kết nối"
                             SemanticProperties.Hint="Kiểm tra kết nối đến cơ sở dữ liệu"
                             Clicked="CheckConnectionBtn_Clicked"
                             HorizontalOptions="Fill"/>
                         <Button
                             x:Name="OpenConnectionBtn"
                             Grid.Column="1"
-                            Text="Mở tệp kết nối"
+                            Text="📂 Mở tệp kết nối"
                             SemanticProperties.Hint="Open thông tin kết nối từ file"
                             Clicked="OpenConnectionFileBtn_Clicked"
                             HorizontalOptions="Fill"/>
                         <Button
                             x:Name="ShareConnectionBtn"
                             Grid.Column="2"
-                            Text="Lưu tệp kết nối"
+                            Text="💾 Lưu tệp kết nối"
                             SemanticProperties.Hint="Lưu thông tin kết nối ra file JSON"
                             IsEnabled="False"
                             Clicked="ShareConnectionFileBtn_Clicked"

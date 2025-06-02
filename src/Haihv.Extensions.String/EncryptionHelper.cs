@@ -220,38 +220,11 @@ public static class EncryptionHelper
         using var result = new MemoryStream();
         cs.CopyTo(result);
         return result.ToArray();
-    }
-
-    /// <summary>
-    /// Tạo mật khẩu ngẫu nhiên mạnh.
-    /// </summary>
-    /// <param name="length">Độ dài mật khẩu (tối thiểu 12 ký tự)</param>
-    /// <returns>Mật khẩu ngẫu nhiên</returns>
-    public static string GenerateSecurePassword(int length = 22)
-    {
-        if (length < 12)
-            throw new ArgumentException("Độ dài mật khẩu phải ít nhất 12 ký tự", nameof(length));
-
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-        using var rng = RandomNumberGenerator.Create();
-        byte[] randomBytes = new byte[length];
-        rng.GetBytes(randomBytes);
-
-        var password = new StringBuilder(length);
-        for (int i = 0; i < length; i++)
-        {
-            password.Append(chars[randomBytes[i] % chars.Length]);
-        }
-
-        return password.ToString();
-    }
-
-    /// <summary>
-    /// Kiểm tra độ mạnh của mật khẩu.
-    /// </summary>
-    /// <param name="password">Mật khẩu cần kiểm tra</param>
-    /// <returns>Điểm số từ 0-100 (100 là mạnh nhất)</returns>
+    }    /// <summary>
+         /// Kiểm tra độ mạnh của mật khẩu.
+         /// </summary>
+         /// <param name="password">Mật khẩu cần kiểm tra</param>
+         /// <returns>Điểm số từ 0-100 (100 là mạnh nhất)</returns>
     public static int CheckPasswordStrength(string password)
     {
         if (string.IsNullOrEmpty(password))
@@ -271,11 +244,65 @@ public static class EncryptionHelper
         if (password.Any(char.IsUpper)) score += 15;
 
         // Số
-        if (password.Any(char.IsDigit)) score += 15;
-
-        // Ký tự đặc biệt
+        if (password.Any(char.IsDigit)) score += 15;        // Ký tự đặc biệt
         if (password.Any(c => !char.IsLetterOrDigit(c))) score += 15;
 
         return Math.Min(score, 100);
+    }
+
+    /// <summary>
+    /// Tạo mật khẩu ngẫu nhiên mạnh với độ dài tùy chỉnh.
+    /// </summary>
+    /// <param name="length">Độ dài mật khẩu (tối thiểu 8 ký tự)</param>
+    /// <returns>Mật khẩu ngẫu nhiên mạnh</returns>
+    public static string GenerateSecurePassword(int length = 16)
+    {
+        if (length < 8)
+            throw new ArgumentException("Độ dài mật khẩu phải tối thiểu 8 ký tự", nameof(length));
+
+        const string lowercase = "abcdefghijklmnopqrstuvwxyz";
+        const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string digits = "0123456789";
+        const string specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+        var password = new StringBuilder();
+        using var rng = RandomNumberGenerator.Create();
+
+        // Đảm bảo có ít nhất 1 ký tự từ mỗi loại
+        password.Append(GetRandomChar(lowercase, rng));
+        password.Append(GetRandomChar(uppercase, rng));
+        password.Append(GetRandomChar(digits, rng));
+        password.Append(GetRandomChar(specialChars, rng));
+
+        // Điền phần còn lại với ký tự ngẫu nhiên từ tất cả các loại
+        string allChars = lowercase + uppercase + digits + specialChars;
+        for (int i = 4; i < length; i++)
+        {
+            password.Append(GetRandomChar(allChars, rng));
+        }
+
+        // Trộn lại thứ tự để tránh pattern cố định
+        return ShuffleString(password.ToString(), rng);
+    }
+
+    private static char GetRandomChar(string chars, RandomNumberGenerator rng)
+    {
+        byte[] randomBytes = new byte[4];
+        rng.GetBytes(randomBytes);
+        int randomIndex = Math.Abs(BitConverter.ToInt32(randomBytes, 0)) % chars.Length;
+        return chars[randomIndex];
+    }
+
+    private static string ShuffleString(string input, RandomNumberGenerator rng)
+    {
+        char[] array = input.ToCharArray();
+        for (int i = array.Length - 1; i > 0; i--)
+        {
+            byte[] randomBytes = new byte[4];
+            rng.GetBytes(randomBytes);
+            int j = Math.Abs(BitConverter.ToInt32(randomBytes, 0)) % (i + 1);
+            (array[i], array[j]) = (array[j], array[i]);
+        }
+        return new string(array);
     }
 }

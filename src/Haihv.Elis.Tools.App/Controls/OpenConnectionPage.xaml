@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Haihv.Elis.Tools.App.Controls.OpenConnectionPage"
              Title="Nhập mật khẩu">
-    
+
     <Grid>
         <!-- Background overlay -->
-        <BoxView BackgroundColor="Black" Opacity="0.5" />
-        
+        <BoxView BackgroundColor="Black"
+                Opacity="0.5"/>
+
         <!-- Main dialog -->
         <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2B2B2B}"
                 Stroke="{AppThemeBinding Light=LightGray, Dark=Gray}"
@@ -16,48 +17,58 @@
                 HeightRequest="280"
                 HorizontalOptions="Center"
                 VerticalOptions="Center">
-            
+
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
             </Border.StrokeShape>
-            
-            <VerticalStackLayout Padding="20" Spacing="15">
+
+            <VerticalStackLayout Padding="20"
+                    Spacing="15">
                 <!-- Title -->
                 <Label x:Name="TitleLabel"
                        Text="🔒 Nhập mật khẩu giải mã"
                        FontSize="18"
                        FontAttributes="Bold"
-                       HorizontalOptions="Center" />
-                
+                       HorizontalOptions="Center"/>
                 <!-- Message -->
                 <Label x:Name="MessageLabel"
                        Text="File được mã hóa. Vui lòng nhập mật khẩu để giải mã:"
                        FontSize="14"
                        HorizontalOptions="Center"
-                       HorizontalTextAlignment="Center" />
-                
+                       HorizontalTextAlignment="Center"/>
+
+                <!-- Thông tin hết hạn -->
+                <Label x:Name="ExpiryInfoLabel"
+                       Text=""
+                       FontSize="12"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       IsVisible="False"/>
+
                 <!-- Password Entry -->
                 <Entry x:Name="PasswordEntry"
                        IsPassword="True"
                        Placeholder="🔑 Nhập mật khẩu"
                        FontSize="14"
-                       Completed="OnPasswordEntryCompleted" />
-                
+                       Completed="OnPasswordEntryCompleted"/>
+
                 <!-- Buttons -->
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                <Grid ColumnDefinitions="*,*"
+                        ColumnSpacing="10"
+                        Margin="0,10,0,0">
                     <Button x:Name="CancelButton"
                             Grid.Column="0"
                             Text="Hủy"
                             BackgroundColor="LightGray"
                             TextColor="Black"
-                            Clicked="OnCancelClicked" />
-                    
+                            Clicked="OnCancelClicked"/>
+
                     <Button x:Name="OkButton"
                             Grid.Column="1"
                             Text="Giải mã"
                             BackgroundColor="DodgerBlue"
                             TextColor="White"
-                            Clicked="OnOkClicked" />
+                            Clicked="OnOkClicked"/>
                 </Grid>
             </VerticalStackLayout>
         </Border>

@@ -11,10 +11,31 @@ public sealed class ConnectionInfo
 
     public string Username { get; set; } = "sa";
 
-    public string Password { get; set; } = "123456";
-
-    public bool UseIntegratedSecurity { get; set; }
+    public string Password { get; set; } = "123456"; public bool UseIntegratedSecurity { get; set; }
     public int ConnectTimeout { get; set; } = 10;
+
+    /// <summary>
+    /// Thời gian hết hạn của tệp kết nối. Mặc định là null (không hết hạn)
+    /// </summary>
+    public DateTime? ExpiryDate { get; set; }
+
+    /// <summary>
+    /// Kiểm tra xem tệp kết nối có còn hiệu lực hay không
+    /// </summary>
+    /// <returns>True nếu tệp chưa hết hạn hoặc không có thời gian hết hạn</returns>
+    public bool IsNotExpired()
+    {
+        return ExpiryDate == null || DateTime.Now <= ExpiryDate.Value;
+    }
+
+    /// <summary>
+    /// Đặt thời gian hết hạn từ ngày hiện tại + số ngày
+    /// </summary>
+    /// <param name="days">Số ngày từ hiện tại</param>
+    public void SetExpiryFromNow(int days)
+    {
+        ExpiryDate = DateTime.Now.AddDays(days);
+    }
 
     public string ToConnectionString()
     {
