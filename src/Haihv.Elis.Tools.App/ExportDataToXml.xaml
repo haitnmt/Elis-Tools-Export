@@ -6,17 +6,17 @@
              Title="Tổng hợp và xuất dữ liệu ra XML cho phần mềm VBDLIS">
     <Grid
         HorizontalOptions="Fill"
-        RowDefinitions="*,*,*"
+        RowDefinitions="*,Auto,Auto"
         ColumnSpacing="15"
         Margin="0,15,0,0">
         <ScrollView
-                            Grid.Row="0">
+            Grid.Row="0">
             <VerticalStackLayout
-               Spacing="10">
+                Spacing="10">
                 <Label
-                   Text="Thông tin kết nối dữ liệu"
-                   Style="{StaticResource SubHeadline}"
-                   SemanticProperties.HeadingLevel="Level3"/>
+                    Text="Thông tin kết nối dữ liệu"
+                    Style="{StaticResource SubHeadline}"
+                    SemanticProperties.HeadingLevel="Level3"/>
             </VerticalStackLayout>
         </ScrollView>
 
@@ -33,6 +33,6 @@
             Style="{StaticResource SubHeadline}"
             Text=""
             VerticalOptions="Center"
-            HorizontalOptions="Start" />
+            HorizontalOptions="Start"/>
     </Grid>
 </ContentPage>
