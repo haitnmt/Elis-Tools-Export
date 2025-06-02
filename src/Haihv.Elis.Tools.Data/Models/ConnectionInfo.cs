@@ -43,13 +43,15 @@ public sealed class ConnectionInfo
     public bool IsValid()
     {
         return !string.IsNullOrEmpty(Server) && !string.IsNullOrEmpty(Database);
-    }    /// <summary>
-         /// Deserialize chuỗi JSON thành đối tượng ConnectionInfo.
-         /// </summary>
-         /// <param name="json">Chuỗi JSON chứa thông tin kết nối.</param>
-         /// <param name="secretKey">Khóa bí mật để giải mã thông tin kết nối (nếu cần).</param>
-         /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
-         /// <returns></returns>
+    }
+
+    /// <summary>
+    /// Deserialize chuỗi JSON thành đối tượng ConnectionInfo.
+    /// </summary>
+    /// <param name="json">Chuỗi JSON chứa thông tin kết nối.</param>
+    /// <param name="secretKey">Khóa bí mật để giải mã thông tin kết nối (nếu cần).</param>
+    /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
+    /// <returns></returns>
     public static ConnectionInfo? DeserializeConnectionInfo(string json, string? secretKey = null, bool encrypted = true)
     {
         if (string.IsNullOrEmpty(json))
@@ -82,13 +84,15 @@ public sealed class ConnectionInfo
     private static readonly JsonSerializerOptions SWriteOptions = new()
     {
         WriteIndented = true
-    };    /// <summary>
-          /// Serialize thông tin kết nối thành chuỗi JSON.
-          /// </summary>
-          /// <param name="connectionInfo">Thông tin kết nối cần serialize.</param>
-          /// <param name="secretKey">Khóa bí mật để mã hóa thông tin kết nối (nếu cần).</param>
-          /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
-          /// <returns></returns>
+    };
+
+    /// <summary>
+    /// Serialize thông tin kết nối thành chuỗi JSON.
+    /// </summary>
+    /// <param name="connectionInfo">Thông tin kết nối cần serialize.</param>
+    /// <param name="secretKey">Khóa bí mật để mã hóa thông tin kết nối (nếu cần).</param>
+    /// <param name="encrypted">Chỉ định xem thông tin kết nối có được mã hóa hay không.</param>
+    /// <returns></returns>
     public static string Serialize(ConnectionInfo connectionInfo, string? secretKey = null, bool encrypted = true)
     {
         ArgumentNullException.ThrowIfNull(connectionInfo);
