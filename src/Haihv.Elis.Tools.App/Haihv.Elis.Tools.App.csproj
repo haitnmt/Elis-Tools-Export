@@ -79,10 +79,13 @@
       <Compile Update="Controls\OpenConnectionPage.xaml.cs">
         <DependentUpon>OpenConnectionPage.xaml</DependentUpon>
       </Compile>
+      <Compile Update="ExportDataToXml.xaml.cs">
+        <DependentUpon>ExportDataToXml.xaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <MauiXaml Update="ExportData.xaml">
+        <MauiXaml Update="ExportDataToXml.xaml">
             <Generator>MSBuild:Compile</Generator>
         </MauiXaml>
     </ItemGroup>

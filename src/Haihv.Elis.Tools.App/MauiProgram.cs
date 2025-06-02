@@ -33,7 +33,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ConnectionService>();
 
         builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddSingleton<ExportData>();
+        builder.Services.AddSingleton<ExportDataToXml>();
 
 #if DEBUG
         builder.Logging.AddDebug();

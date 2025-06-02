@@ -1,14 +1,13 @@
 using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
-using Microsoft.Maui.Controls;
 
 namespace Haihv.Elis.Tools.App;
 
-public partial class ExportData : ContentPage
+public partial class ExportDataToXml : ContentPage
 {
     private readonly ConnectionInfo? _connectionInfo;
 
-    public ExportData(ConnectionService connectionService)
+    public ExportDataToXml(ConnectionService connectionService)
     {
         _connectionInfo = connectionService.ConnectionInfo;
 

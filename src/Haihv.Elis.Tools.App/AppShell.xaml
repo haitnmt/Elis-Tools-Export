@@ -8,12 +8,12 @@
     Title="Trích xuất dữ liệu Elis">
 
     <ShellContent
-        Title="Home"
+        Title="Trang chủ"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
     <ShellContent
         Title="Trích xuất dữ liệu"
-        ContentTemplate="{DataTemplate local:ExportData}"
+        ContentTemplate="{DataTemplate local:ExportDataToXml}"
         Route="ExportData" />
 
 </Shell>
