@@ -9,13 +9,19 @@ namespace Haihv.Elis.Tools.App;
 public partial class MainPage
 {
     private ConnectionInfo _connectionInfo = null!;
+    private ConnectionInfo? _lastValidConnectionInfo = null; // Lưu trữ thông tin kết nối đã kiểm tra thành công gần nhất
 
-    private readonly ConnectionService _connectionService;
-
-    public MainPage(ConnectionService connectionService)
+    private readonly ConnectionService _connectionService; public MainPage(ConnectionService connectionService)
     {
         InitializeComponent();
         _connectionService = connectionService;
+
+        // Đăng ký sự kiện TextChanged cho các Entry
+        EntryServer.TextChanged += OnConnectionInfoChanged;
+        EntryDatabase.TextChanged += OnConnectionInfoChanged;
+        EntryUserId.TextChanged += OnConnectionInfoChanged;
+        EntryPassword.TextChanged += OnConnectionInfoChanged;
+
         // Đọc thông tin kết nối từ file cấu hình
         _ = LoadConnectionInfoAsync();
     }
@@ -30,11 +36,11 @@ public partial class MainPage
             if (loadedInfo != null && loadedInfo.IsValid())
             {
                 _connectionInfo = loadedInfo;
-                var (success, message) = await _connectionInfo.CheckConnection();
-                if (success)
+                var (success, message) = await _connectionInfo.CheckConnection(); if (success)
                 {
                     UpdateConnectionInfoUi(); // Cập nhật UI với thông tin kết nối đã đọc
                     await DisplayAlert("Thông báo", "Đọc và kiểm tra thông tin kết nối đã lưu thành công!", "OK"); _connectionService.ConnectionInfo = _connectionInfo;
+                    _lastValidConnectionInfo = CloneConnectionInfo(_connectionInfo); // Lưu thông tin kết nối đã kiểm tra thành công
                     ShareConnectionBtn.IsEnabled = true; // Kích hoạt nút Share nếu kết nối thành công
                 }
                 else
@@ -55,7 +61,6 @@ public partial class MainPage
         // Nếu không đọc được từ file hoặc dữ liệu không hợp lệ, sử dụng giá trị mặc định
         SetDefaultConnectionInfo();
     }
-
     private void UpdateConnectionInfoUi()
     {
         // Cập nhật các trường nhập liệu từ ConnectionInfo
@@ -63,6 +68,9 @@ public partial class MainPage
         EntryDatabase.Text = _connectionInfo.Database;
         EntryUserId.Text = _connectionInfo.Username;
         EntryPassword.Text = _connectionInfo.Password;
+
+        // Cập nhật trạng thái nút ShareConnectionBtn
+        UpdateShareButtonState();
     }
 
     private void SetDefaultConnectionInfo()
@@ -78,7 +86,6 @@ public partial class MainPage
         UpdateConnectionInfoUi();
         _connectionService.ConnectionInfo = _connectionInfo;
     }
-
     private async Task SaveConnection()
     {
         try
@@ -88,6 +95,7 @@ public partial class MainPage
             if (success)
             {
                 _connectionService.ConnectionInfo = _connectionInfo; // Cập nhật thông tin kết nối
+                _lastValidConnectionInfo = CloneConnectionInfo(_connectionInfo); // Lưu thông tin kết nối đã kiểm tra thành công
                 ShareConnectionBtn.IsEnabled = true;
             }
             else
@@ -101,6 +109,68 @@ public partial class MainPage
         }
     }
 
+    /// <summary>
+    /// Sự kiện được gọi khi thông tin kết nối thay đổi
+    /// </summary>
+    private void OnConnectionInfoChanged(object? sender, TextChangedEventArgs e)
+    {
+        UpdateShareButtonState();
+    }
+
+    /// <summary>
+    /// Cập nhật trạng thái của nút ShareConnectionBtn dựa trên sự thay đổi thông tin kết nối
+    /// </summary>
+    private void UpdateShareButtonState()
+    {
+        if (_lastValidConnectionInfo == null)
+        {
+            ShareConnectionBtn.IsEnabled = false;
+            return;
+        }
+
+        // Lấy thông tin hiện tại từ UI
+        var currentInfo = new ConnectionInfo
+        {
+            Server = EntryServer.Text ?? string.Empty,
+            Database = EntryDatabase.Text ?? string.Empty,
+            Username = EntryUserId.Text ?? string.Empty,
+            Password = EntryPassword.Text ?? string.Empty
+        };
+
+        // So sánh với thông tin đã kiểm tra thành công gần nhất
+        bool isUnchanged = IsConnectionInfoEqual(currentInfo, _lastValidConnectionInfo);
+        ShareConnectionBtn.IsEnabled = isUnchanged;
+    }
+
+    /// <summary>
+    /// So sánh hai ConnectionInfo để xem có giống nhau không
+    /// </summary>
+    private static bool IsConnectionInfoEqual(ConnectionInfo info1, ConnectionInfo info2)
+    {
+        if (info1 == null || info2 == null) return false;
+
+        return string.Equals(info1.Server, info2.Server, StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(info1.Database, info2.Database, StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(info1.Username, info2.Username, StringComparison.Ordinal) &&
+               string.Equals(info1.Password, info2.Password, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Tạo bản sao của ConnectionInfo
+    /// </summary>
+    private static ConnectionInfo CloneConnectionInfo(ConnectionInfo original)
+    {
+        return new ConnectionInfo
+        {
+            Server = original.Server,
+            Database = original.Database,
+            Username = original.Username,
+            Password = original.Password,
+            UseIntegratedSecurity = original.UseIntegratedSecurity,
+            ConnectTimeout = original.ConnectTimeout
+        };
+    }
+
     private async void CheckConnectionBtn_Clicked(object? sender, EventArgs e)
     {
         try
@@ -112,14 +182,14 @@ public partial class MainPage
             _connectionInfo.Username = EntryUserId.Text;
             _connectionInfo.Password = EntryPassword.Text;
 
-            var (success, message) = await _connectionInfo.CheckConnection();
-            if (success)
+            var (success, message) = await _connectionInfo.CheckConnection(); if (success)
             {
                 await DisplayAlert("Thông báo", "Kết nối thành công!", "OK");
                 await SaveConnection();
             }
             else
             {
+                ShareConnectionBtn.IsEnabled = false; // Disable nút nếu kết nối thất bại
                 await DisplayAlert("Lỗi", $"Kết nối thất bại: {message}", "OK");
             }
         }
@@ -171,8 +241,7 @@ public partial class MainPage
             // Thử mở mà không cần mật khẩu trước (tệp không mã hóa)
             var (openedConnection, message) = await filePath.ImportConnectionSettings(string.Empty);
             if (openedConnection is not null)
-            {
-                // Mở thành công mà không cần mật khẩu
+            {                // Mở thành công mà không cần mật khẩu
                 _connectionInfo = openedConnection;
                 UpdateConnectionInfoUi();
                 await SaveConnection();
@@ -216,8 +285,7 @@ public partial class MainPage
         try
         {
             // Sử dụng mật khẩu mã hóa khi mở thông tin kết nối
-            var (openedConnection, message) = await filePath.ImportConnectionSettings(secretKey);
-            if (openedConnection is not null)
+            var (openedConnection, message) = await filePath.ImportConnectionSettings(secretKey); if (openedConnection is not null)
             {
                 _connectionInfo = openedConnection;
                 // Cập nhật UI với thông tin kết nối đã mở
