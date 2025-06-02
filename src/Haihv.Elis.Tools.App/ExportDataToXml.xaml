@@ -3,12 +3,36 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Haihv.Elis.Tools.App.ExportDataToXml"
-             Title="Tổng hợp và xuất dữ liệu">
-    <VerticalStackLayout>
+             Title="Tổng hợp và xuất dữ liệu ra XML cho phần mềm VBDLIS">
+    <Grid
+        HorizontalOptions="Fill"
+        RowDefinitions="*,*,*"
+        ColumnSpacing="15"
+        Margin="0,15,0,0">
+        <ScrollView
+                            Grid.Row="0">
+            <VerticalStackLayout
+               Spacing="10">
+                <Label
+                   Text="Thông tin kết nối dữ liệu"
+                   Style="{StaticResource SubHeadline}"
+                   SemanticProperties.HeadingLevel="Level3"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+
+        <BoxView
+            Grid.Row="1"
+            HeightRequest="1"
+            Color="Gray"
+            HorizontalOptions="Fill"
+            Margin="0,10"/>
         <Label
             x:Name="DataInfoLabel"
+            Grid.Row="2"
+            Style="{StaticResource SubHeadline}"
             Text=""
             VerticalOptions="Center"
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+            HorizontalOptions="Start" />
+    </Grid>
 </ContentPage>

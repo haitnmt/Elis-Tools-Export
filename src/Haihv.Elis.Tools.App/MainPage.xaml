@@ -3,7 +3,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Haihv.Elis.Tools.App.MainPage"
-             Title="Trang chủ">
+             Title="Trang chủ và cấu hình kết nối dữ liệu">
 
     <ScrollView>
         <VerticalStackLayout
