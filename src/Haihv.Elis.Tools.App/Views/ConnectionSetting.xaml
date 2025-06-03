@@ -2,6 +2,61 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Haihv.Elis.Tools.App.Views.ConnectionSetting">
-    
+             xmlns:models="clr-namespace:Haihv.Elis.Tools.Data.Models;assembly=Haihv.Elis.Tools.Data"
+             xmlns:views="clr-namespace:Haihv.Elis.Tools.App.Views"
+             x:Class="Haihv.Elis.Tools.App.Views.ConnectionSetting"
+             BackgroundColor="LightYellow">
+    <StackLayout Padding="20"
+            Spacing="10" x:DataType="models:ConnectionInfo">
+        <!-- Test label để đảm bảo hiển thị -->
+        <Label Text="CONNECTION SETTING PAGE - TEST"
+               FontSize="20"
+               FontAttributes="Bold"
+               TextColor="Red"
+               HorizontalOptions="Center"/>
+
+        <Label Text="Thông tin kết nối dữ liệu"
+               FontSize="18"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               TextColor="DarkBlue"/>
+
+        <Label Text="Máy chủ dữ liệu:"
+                FontSize="14"/>
+        <Entry x:Name="EntryServer"
+               Text="{Binding Server, FallbackValue='localhost'}"
+               Placeholder="Máy chủ dữ liệu"/>
+
+        <Label Text="Tên cơ sở dữ liệu:"
+                FontSize="14"/>
+        <Entry x:Name="EntryDatabase"
+               Text="{Binding Database, FallbackValue='elis'}"
+               Placeholder="Tên cơ sở dữ liệu"/>
+
+        <Label Text="Tên tài khoản:"
+                FontSize="14"/>
+        <Entry x:Name="EntryUserId"
+               Text="{Binding Username, FallbackValue='sa'}"
+               Placeholder="Tên tài khoản"/>
+
+        <Label Text="Mật khẩu:"
+                FontSize="14"/>
+        <Entry x:Name="EntryPassword"
+               IsPassword="True"
+               Text="{Binding Password, FallbackValue='password'}"
+               Placeholder="Mật khẩu"/>
+
+        <Button x:Name="CheckConnectionBtn"
+                Text="✅ Kiểm tra Kết nối"
+                Clicked="CheckConnectionBtn_Clicked"/>
+
+        <Button x:Name="OpenConnectionBtn"
+                Text="📂 Mở tệp kết nối"
+                Clicked="OpenConnectionFileBtn_Clicked"/>
+
+        <Button x:Name="ShareConnectionBtn"
+                Text="💾 Lưu tệp kết nối"
+                IsEnabled="{Binding IsShareButtonEnabled, FallbackValue=false}"
+                Clicked="ShareConnectionFileBtn_Clicked" x:DataType="views:ConnectionSettingViewModel" />
+    </StackLayout>
 </ContentView>

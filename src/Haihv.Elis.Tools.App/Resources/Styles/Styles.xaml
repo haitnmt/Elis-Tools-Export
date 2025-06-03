@@ -213,7 +213,7 @@
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
-    <Style TargetType="Label" x:Key="LableEntry">
+    <Style TargetType="Label" x:Key="LabelEntry">
         <Setter Property="TextColor"
                 Value="{AppThemeBinding Light={StaticResource MidnightBlue}, Dark={StaticResource White}}" />
         <Setter Property="FontSize" Value="Body" />

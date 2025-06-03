@@ -6,16 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Haihv.Elis.Tools.App"
     Title="Trích xuất dữ liệu Elis">
-    <TabBar>
-        <ShellContent
-        Title="Trang chủ"
-        Icon="home_tab.png"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage"/>
-        <ShellContent
-        Title="Xuất dữ liệu XML VBDLIS"
-        Icon="download_tab.png"
-        ContentTemplate="{DataTemplate local:ExportDataToXml}"
-        Route="ExportData"/>
-    </TabBar>
+    <ShellContent
+    ContentTemplate="{DataTemplate local:MainPage}"
+    Route="MainPage"/>
 </Shell>
