@@ -2,9 +2,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Haihv.Elis.Tools.App.ContentViews;
+using Haihv.Elis.Tools.App.Models;
 using Haihv.Elis.Tools.App.Views;
 
-namespace Haihv.Elis.Tools.App.Models;
+namespace Haihv.Elis.Tools.App.ViewModels;
 
 public sealed class MainViewModel : INotifyPropertyChanged
 {
@@ -53,7 +54,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             System.Diagnostics.Debug.WriteLine("Show ExportDataToXml executed");
             LoadExportDataToXmlPage();
         });        // Khởi tạo thông tin kết nối mặc định
-        RenderConnectionInfo = "🔗: localhost/elis (sa)";
+        RenderConnectionInfo = "localhost/elis (sa)";
 
         // Khởi tạo toolbar items
         InitializeToolbarItems();

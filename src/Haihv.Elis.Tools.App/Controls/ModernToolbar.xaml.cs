@@ -7,7 +7,7 @@ namespace Haihv.Elis.Tools.App.Controls;
 public partial class ModernToolbar : ContentView
 {
     public static readonly BindableProperty ItemsSourceProperty =
-        BindableProperty.Create(nameof(ItemsSource), typeof(ObservableCollection<MenuToolbarItem>), typeof(ModernToolbar), null);
+        BindableProperty.Create(nameof(ItemsSource), typeof(ObservableCollection<MenuToolbarItem>), typeof(ModernToolbar), null, propertyChanged: OnItemsSourcePropertyChanged);
 
     public static readonly BindableProperty SelectedItemProperty =
         BindableProperty.Create(nameof(SelectedItem), typeof(MenuToolbarItem), typeof(ModernToolbar), null);
@@ -32,18 +32,19 @@ public partial class ModernToolbar : ContentView
         get => (StackOrientation)GetValue(OrientationProperty);
         set => SetValue(OrientationProperty, value);
     }
-
     public ModernToolbar()
     {
         InitializeComponent();
-        BindingContext = this;
-    }    private void OnItemTapped(object sender, SelectionChangedEventArgs e)
+        // Đảm bảo CollectionView được gán ItemsSource ngay sau khi khởi tạo
+        Loaded += (sender, e) => UpdateCollectionViewItemsSource();
+    }
+    private void OnItemTapped(object sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is MenuToolbarItem selectedItem)
         {
             // Cập nhật trạng thái active
             UpdateActiveStates(selectedItem);
-            
+
             // Thực thi command nếu có
             if (selectedItem.Command?.CanExecute(selectedItem) == true)
             {
@@ -65,19 +66,33 @@ public partial class ModernToolbar : ContentView
             }
         }
     }
-
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         base.OnPropertyChanged(propertyName);
 
         if (propertyName == nameof(ItemsSource))
         {
-            OnItemsSourceChanged();
+            UpdateCollectionViewItemsSource();
         }
     }
-    private void OnItemsSourceChanged()
+
+    private static void OnItemsSourcePropertyChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        // Có thể thêm logic xử lý khi ItemsSource thay đổi
-        // ItemsSource sẽ được bind trực tiếp qua XAML
+        if (bindable is ModernToolbar toolbar)
+        {
+            toolbar.UpdateCollectionViewItemsSource();
+        }
+    }
+    private void UpdateCollectionViewItemsSource()
+    {
+        if (ToolbarCollectionView != null)
+        {
+            ToolbarCollectionView.ItemsSource = ItemsSource;
+            System.Diagnostics.Debug.WriteLine($"ModernToolbar: Updated CollectionView ItemsSource. ItemsSource count: {ItemsSource?.Count ?? 0}");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("ModernToolbar: ToolbarCollectionView is null");
+        }
     }
 }

@@ -1,11 +1,15 @@
-﻿using Haihv.Elis.Tools.Data.Services;
+﻿using Haihv.Elis.Tools.App.ContentViews;
+using Haihv.Elis.Tools.App.Models;
+using Haihv.Elis.Tools.App.ViewModels;
+using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.App.Views;
 
 namespace Haihv.Elis.Tools.App;
 
 public partial class MainPage : ContentPage
 {
-    private readonly ConnectionService _connectionService; public MainPage(ConnectionService connectionService)
+    private readonly ConnectionService _connectionService; 
+    public MainPage(ConnectionService connectionService)
     {
         InitializeComponent();
         _connectionService = connectionService;
@@ -30,7 +34,7 @@ public partial class MainPage : ContentPage
             // Nếu template hiện tại là ConnectionSettingPage (ConnectionSetting)
             var currentTemplate = viewModel.CurrentContent;
             if (Application.Current?.Resources != null &&
-                Application.Current.Resources.TryGetValue("ConnectionSettingPag", out var connectionSettingPage) &&
+                Application.Current.Resources.TryGetValue("ConnectionSettingPage", out var connectionSettingPage) &&
                 currentTemplate == connectionSettingPage)
             {
                 // Tìm ConnectionSetting instance trong visual tree

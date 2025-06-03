@@ -6,7 +6,7 @@ using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
 
-namespace Haihv.Elis.Tools.App.Models;
+namespace Haihv.Elis.Tools.App.ViewModels;
 
 public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
 {
@@ -92,10 +92,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
         }
     }
 
-    public string RenderConnectionInfo
-    {
-        get => $"🔗: {_connectionInfo.RenderConnectionInfo()}";
-    }
+    public string RenderConnectionInfo => _connectionInfo.RenderConnectionInfo();
 
     private void NotifyConnectionInfoChanged()
     {
@@ -213,17 +210,17 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
 
         var currentInfo = new ConnectionInfo
         {
-            Server = Server ?? string.Empty,
-            Database = Database ?? string.Empty,
-            Username = UserId ?? string.Empty,
-            Password = Password ?? string.Empty
+            Server = Server,
+            Database = Database,
+            Username = UserId,
+            Password = Password
         };
 
         bool isUnchanged = IsConnectionInfoEqual(currentInfo, _lastValidConnectionInfo);
         IsShareButtonEnabled = isUnchanged;
     }
 
-    private static bool IsConnectionInfoEqual(ConnectionInfo info1, ConnectionInfo info2)
+    private static bool IsConnectionInfoEqual(ConnectionInfo? info1, ConnectionInfo? info2)
     {
         if (info1 == null || info2 == null) return false;
 
@@ -313,7 +310,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
     {
         try
         {
-            var (openedConnection, message) = await filePath.ImportConnectionSettings(string.Empty);
+            var (openedConnection, _) = await filePath.ImportConnectionSettings(string.Empty);
             if (openedConnection is not null)
             {
                 _connectionInfo = openedConnection;
@@ -363,7 +360,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
     {
         try
         {
-            var (openedConnection, message) = await filePath.ImportConnectionSettings(secretKey);
+            var (openedConnection, _) = await filePath.ImportConnectionSettings(secretKey);
 
             if (openedConnection is not null)
             {
@@ -374,12 +371,10 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
                     "Đã mở và giải mã thông tin kết nối thành công!", "OK");
                 return true;
             }
-            else
-            {
-                await _parentPage.DisplayAlert("❌ Mật khẩu không chính xác",
-                    "Không thể giải mã tệp với mật khẩu đã nhập.\nVui lòng kiểm tra lại mật khẩu!", "Thử lại");
-                return false;
-            }
+
+            await _parentPage.DisplayAlert("❌ Mật khẩu không chính xác",
+                "Không thể giải mã tệp với mật khẩu đã nhập.\nVui lòng kiểm tra lại mật khẩu!", "Thử lại");
+            return false;
         }
         catch (Exception ex)
         {

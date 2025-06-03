@@ -76,8 +76,21 @@
         <ProjectReference Include="..\Haihv.Extensions.String\Haihv.Extensions.String.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Compile Update="Controls\OpenConnectionPage.xaml.cs">
+      <MauiXaml Update="ContentPages\OpenConnectionPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="ContentPages\ShareConnectionPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="ContentPages\OpenConnectionPage.xaml.cs">
         <DependentUpon>OpenConnectionPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="ContentPages\ShareConnectionPage.xaml.cs">
+        <DependentUpon>ShareConnectionPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
 

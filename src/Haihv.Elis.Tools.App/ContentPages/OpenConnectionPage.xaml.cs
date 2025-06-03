@@ -1,6 +1,6 @@
 using Haihv.Elis.Tools.Data.Models;
 
-namespace Haihv.Elis.Tools.App.Controls;
+namespace Haihv.Elis.Tools.App.ContentPages;
 
 public partial class OpenConnectionPage : ContentPage
 {

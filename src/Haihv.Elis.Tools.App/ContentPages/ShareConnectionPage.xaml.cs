@@ -2,7 +2,7 @@ using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Maui.Extensions;
 using Haihv.Extensions.String;
 
-namespace Haihv.Elis.Tools.App.Controls;
+namespace Haihv.Elis.Tools.App.ContentPages;
 
 public partial class ShareConnectionPage : ContentPage
 {

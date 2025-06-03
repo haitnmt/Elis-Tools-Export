@@ -1,6 +1,9 @@
+using Haihv.Elis.Tools.App.Models;
+using Haihv.Elis.Tools.App.ViewModels;
+using Haihv.Elis.Tools.App.Views;
 using Haihv.Elis.Tools.Data.Services;
 
-namespace Haihv.Elis.Tools.App.Views;
+namespace Haihv.Elis.Tools.App.ContentViews;
 
 public partial class ConnectionSetting : ContentView
 {
