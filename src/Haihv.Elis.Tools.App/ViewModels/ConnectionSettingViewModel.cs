@@ -1,16 +1,17 @@
 using System.ComponentModel;
 using System.Windows.Input;
+using Haihv.Elis.Tools.App.ContentPages;
 using Haihv.Elis.Tools.App.Extensions;
 using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
 
-namespace Haihv.Elis.Tools.App.Views;
+namespace Haihv.Elis.Tools.App.Models;
 
-public class ConnectionSettingViewModel : INotifyPropertyChanged
+public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
 {
     private ConnectionInfo _connectionInfo = null!;
-    private ConnectionInfo? _lastValidConnectionInfo = null;
+    private ConnectionInfo? _lastValidConnectionInfo;
     private readonly ConnectionService _connectionService;
     private readonly Page _parentPage;
 
@@ -18,13 +19,13 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
     private string _database = "elis";
     private string _userId = "sa";
     private string _password = "1234567";
-    private bool _isShareButtonEnabled = false;
+    private bool _isShareButtonEnabled;
 
     public ConnectionSettingViewModel(ConnectionService connectionService, Page parentPage)
     {
         _connectionService = connectionService;
         _parentPage = parentPage;
-    
+
         CheckConnectionCommand = new Command(async void () => await CheckConnectionAsync());
         OpenConnectionFileCommand = new Command(async void () => await OpenConnectionFileAsync());
         ShareConnectionFileCommand = new Command(async void () => await ShareConnectionFileAsync());
@@ -81,7 +82,6 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
             OnConnectionInfoChanged();
         }
     }
-
     public bool IsShareButtonEnabled
     {
         get => _isShareButtonEnabled;
@@ -90,6 +90,18 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
             _isShareButtonEnabled = value;
             OnPropertyChanged();
         }
+    }
+
+    public string RenderConnectionInfo
+    {
+        get => $"🔗: {_connectionInfo.RenderConnectionInfo()}";
+    }
+
+    private void NotifyConnectionInfoChanged()
+    {
+        OnPropertyChanged(nameof(RenderConnectionInfo));
+        // Thông báo cho MainViewModel để cập nhật footer
+        MainViewModel.Current?.UpdateConnectionInfo(RenderConnectionInfo);
     }
 
     #endregion
@@ -141,7 +153,6 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
         // Nếu không đọc được từ file hoặc dữ liệu không hợp lệ, sử dụng giá trị mặc định
         SetDefaultConnectionInfo();
     }
-
     private void UpdateConnectionInfoProperties()
     {
         Server = _connectionInfo.Server;
@@ -149,8 +160,8 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
         UserId = _connectionInfo.Username;
         Password = _connectionInfo.Password;
         UpdateShareButtonState();
+        NotifyConnectionInfoChanged();
     }
-
     private void SetDefaultConnectionInfo()
     {
         _connectionInfo = new ConnectionInfo
@@ -162,6 +173,7 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
         };
         UpdateConnectionInfoProperties();
         _connectionService.ConnectionInfo = _connectionInfo;
+        NotifyConnectionInfoChanged();
     }
 
     private async Task SaveConnection()
@@ -185,10 +197,10 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
             await _parentPage.DisplayAlert("Lỗi", $"Không thể kiểm tra kết nối: {exception.Message}", "OK");
         }
     }
-
     private void OnConnectionInfoChanged()
     {
         UpdateShareButtonState();
+        NotifyConnectionInfoChanged();
     }
 
     private void UpdateShareButtonState()
@@ -251,12 +263,11 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
             _connectionInfo.Username = UserId;
             _connectionInfo.Password = Password;
 
-            var (success, message) = await _connectionInfo.CheckConnection();
-
-            if (success)
+            var (success, message) = await _connectionInfo.CheckConnection(); if (success)
             {
                 await _parentPage.DisplayAlert("Thông báo", "Kết nối thành công!", "OK");
                 await SaveConnection();
+                NotifyConnectionInfoChanged();
             }
             else
             {
@@ -390,7 +401,7 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
     {
         try
         {
-            var sharePage = new Controls.ShareConnectionPage(_connectionInfo);
+            var sharePage = new ShareConnectionPage(_connectionInfo);
             await _parentPage.Navigation.PushModalAsync(sharePage);
         }
         catch (Exception ex)
@@ -428,7 +439,7 @@ public class ConnectionSettingViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

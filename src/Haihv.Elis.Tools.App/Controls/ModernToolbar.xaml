@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Haihv.Elis.Tools.App.Controls.ModernToolbar">
+
+    <!-- Modern Responsive Toolbar -->
+    <Border BackgroundColor="#3B4252"
+            StrokeThickness="0"
+            Padding="8,6">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10"/>
+        </Border.StrokeShape>
+        <Border.Shadow>
+            <Shadow Brush="#1a1a1a"
+                    Offset="0,2"
+                    Radius="4"
+                    Opacity="0.3"/>
+        </Border.Shadow>
+
+        <CollectionView ItemsSource="{Binding ToolbarItems}"
+                        BackgroundColor="Transparent"
+                        HeightRequest="48">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal"
+                                   ItemSpacing="6"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="Transparent"
+                            Padding="16,8"
+                            StrokeThickness="1"
+                            Stroke="Transparent"
+                            MinimumWidthRequest="120">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Command}"/>
+                        </Border.GestureRecognizers>
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding IsActive}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor"
+                                        Value="#434C5E"/>
+                                <Setter Property="Stroke"
+                                        Value="{Binding IconColor}"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor"
+                                                Value="Transparent"/>
+                                        <Setter Property="Stroke"
+                                                Value="Transparent"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor"
+                                                Value="#4C566A"/>
+                                        <Setter Property="Stroke"
+                                                Value="{Binding IconColor}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor"
+                                                Value="#5E81AC"/>
+                                        <Setter Property="Stroke"
+                                                Value="#ECEFF4"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Label Grid.Column="0"
+                                   Text="{Binding Icon}"
+                                   FontSize="16"
+                                   VerticalOptions="Center"
+                                   TextColor="{Binding IconColor}"
+                                   Margin="0,0,8,0"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Title}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   TextColor="#ECEFF4"
+                                   LineBreakMode="TailTruncation"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Border>
+</ContentView>

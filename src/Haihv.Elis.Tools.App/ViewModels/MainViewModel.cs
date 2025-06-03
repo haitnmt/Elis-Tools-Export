@@ -1,11 +1,17 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using Haihv.Elis.Tools.App.ContentViews;
+using Haihv.Elis.Tools.App.Views;
 
-namespace Haihv.Elis.Tools.App.Views;
+namespace Haihv.Elis.Tools.App.Models;
 
-public class MainViewModel : INotifyPropertyChanged
+public sealed class MainViewModel : INotifyPropertyChanged
 {
     private View? _currentContent;
+    private string _renderConnectionInfo = string.Empty;
+
+    public ObservableCollection<MenuToolbarItem> ToolbarItems { get; } = new();
 
     public View? CurrentContent
     {
@@ -18,10 +24,24 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    public string RenderConnectionInfo
+    {
+        get => _renderConnectionInfo;
+        set
+        {
+            _renderConnectionInfo = value;
+            OnPropertyChanged(nameof(RenderConnectionInfo));
+        }
+    }
     public ICommand ShowConnectionSettingCommand { get; }
     public ICommand ShowExportDataToXmlCommand { get; }
+
+    // Static instance để có thể access từ ConnectionSettingViewModel
+    public static MainViewModel? Current { get; private set; }
     public MainViewModel()
     {
+        Current = this;
+
         ShowConnectionSettingCommand = new Command(() =>
         {
             System.Diagnostics.Debug.WriteLine("Show ConnectionSetting executed");
@@ -32,10 +52,38 @@ public class MainViewModel : INotifyPropertyChanged
         {
             System.Diagnostics.Debug.WriteLine("Show ExportDataToXml executed");
             LoadExportDataToXmlPage();
-        });
+        });        // Khởi tạo thông tin kết nối mặc định
+        RenderConnectionInfo = "🔗: localhost/elis (sa)";
+
+        // Khởi tạo toolbar items
+        InitializeToolbarItems();
 
         // Khởi tạo mặc định hiển thị Page1
         InitializeDefaultPage();
+    }
+    public void UpdateConnectionInfo(string connectionInfo)
+    {
+        RenderConnectionInfo = connectionInfo;
+    }
+    private void InitializeToolbarItems()
+    {
+        ToolbarItems.Add(new MenuToolbarItem
+        {
+            Icon = "🔐",
+            Title = "Cấu hình kết nối",
+            IconColor = "#88C0D0",
+            Command = ShowConnectionSettingCommand,
+            IsActive = true
+        });
+
+        ToolbarItems.Add(new MenuToolbarItem
+        {
+            Icon = "⬇",
+            Title = "Trích xuất dữ liệu XML",
+            IconColor = "#A3BE8C",
+            Command = ShowExportDataToXmlCommand,
+            IsActive = false
+        });
     }
 
     private void InitializeDefaultPage()
@@ -73,7 +121,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName)
+    private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
