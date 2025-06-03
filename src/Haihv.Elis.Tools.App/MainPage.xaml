@@ -12,7 +12,7 @@
                      VerticalOptions="Start"
                      BackgroundColor="#2E3440">
             <!-- Title -->
-            <Label Text="Công cụ trích xuất dữ liệu Elis"
+            <Label Text="Công cụ trích xuất dữ liệu ELIS SQL"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="White"
@@ -39,18 +39,27 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="0,0,8,8"/>
             </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="8">
-                <Label Text="🌐"
+            <Grid ColumnDefinitions="Auto,Auto,*">
+                <Label Grid.Column="0"
+                       Text="🌐"
                        FontSize="12"
                        VerticalOptions="Center"
                        TextColor="#81A1C1"/>
-                <Label x:DataType="viewModels:MainViewModel"
+                <Label Grid.Column="1"
+                       x:DataType="viewModels:MainViewModel"
                        Text="{Binding RenderConnectionInfo, FallbackValue='Chưa kết nối'}"
                        FontSize="11"
                        FontFamily="Consolas"
                        VerticalOptions="Center"
                        TextColor="#D8DEE9"/>
-            </HorizontalStackLayout>
+                <Label Grid.Column="2"
+                       Text="©2025 | vpdkbacninh.vn | haihv.vn"
+                       FontSize="11"
+                       FontFamily="Consolas"
+                       HorizontalOptions="End"
+                       VerticalOptions="Center"
+                       TextColor="#D8DEE9"/>
+            </Grid>
         </Border>
     </Grid>
 
