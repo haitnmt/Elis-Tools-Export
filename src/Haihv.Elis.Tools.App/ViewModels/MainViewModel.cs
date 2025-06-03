@@ -1,9 +1,9 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
 using Haihv.Elis.Tools.App.ContentViews;
 using Haihv.Elis.Tools.App.Models;
 using Haihv.Elis.Tools.App.Views;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Haihv.Elis.Tools.App.ViewModels;
 
@@ -79,8 +79,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         ToolbarItems.Add(new MenuToolbarItem
         {
-            Icon = "⬇",
-            Title = "Trích xuất dữ liệu XML",
+            Icon = "📑",
+            Title = "Trích xuất dữ liệu XML VBDLIS",
             IconColor = "#A3BE8C",
             Command = ShowExportDataToXmlCommand,
             IsActive = false
@@ -110,7 +110,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     {
         try
         {
-            var exportDataToXml = new ExportDataToXml();
+            var exportDataToXml = new ExportDataToXmlVBDLIS();
             CurrentContent = exportDataToXml;
             System.Diagnostics.Debug.WriteLine("ExportDataToXml created and set");
         }

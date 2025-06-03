@@ -1,10 +1,10 @@
-using System.ComponentModel;
-using System.Windows.Input;
 using Haihv.Elis.Tools.App.ContentPages;
 using Haihv.Elis.Tools.App.Extensions;
 using Haihv.Elis.Tools.Data.Models;
 using Haihv.Elis.Tools.Data.Services;
 using Haihv.Elis.Tools.Maui.Extensions;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Haihv.Elis.Tools.App.ViewModels;
 
@@ -19,22 +19,31 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
     private string _database = "elis";
     private string _userId = "sa";
     private string _password = "1234567";
-    private bool _isShareButtonEnabled;
-
-    public ConnectionSettingViewModel(ConnectionService connectionService, Page parentPage)
+    private int _dvhcRootId = 27; // Mặc định là 27 (Bắc Ninh)
+    private bool _isShareButtonEnabled; public ConnectionSettingViewModel(ConnectionService connectionService, Page parentPage)
     {
         _connectionService = connectionService;
         _parentPage = parentPage;
 
+
         CheckConnectionCommand = new Command(async void () => await CheckConnectionAsync());
         OpenConnectionFileCommand = new Command(async void () => await OpenConnectionFileAsync());
         ShareConnectionFileCommand = new Command(async void () => await ShareConnectionFileAsync());
+        LoadConnectionCommand = new Command(async void () => await LoadConnectionInfoAsync());
 
-        // Khởi tạo thông tin kết nối mặc định
-        SetDefaultConnectionInfo();
-
-        // Đọc thông tin kết nối từ file cấu hình
-        _ = LoadConnectionInfoAsync();
+        // Chỉ đọc thông tin kết nối từ file cấu hình lần đầu tiên (khi khởi động ứng dụng)
+        if (!_connectionService.HasLoadedInitialConnection)
+        {
+            _ = LoadConnectionInfoAsync();
+        }
+        else if (_connectionService.ConnectionInfo != null)
+        {
+            // Nếu đã có thông tin kết nối trong service, sử dụng nó
+            _connectionInfo = _connectionService.ConnectionInfo;
+            UpdateConnectionInfoProperties();
+            _lastValidConnectionInfo = CloneConnectionInfo(_connectionInfo);
+            IsShareButtonEnabled = true;
+        }
     }
 
     #region Properties
@@ -91,8 +100,18 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    public int DvhcRootId
+    {
+        get => _dvhcRootId;
+        set
+        {
+            _dvhcRootId = value;
+            OnPropertyChanged();
+            OnConnectionInfoChanged();
+        }
+    }
 
-    public string RenderConnectionInfo => _connectionInfo.RenderConnectionInfo();
+    public string RenderConnectionInfo => _connectionInfo?.RenderConnectionInfo() ?? string.Empty;
 
     private void NotifyConnectionInfoChanged()
     {
@@ -108,6 +127,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
     public ICommand CheckConnectionCommand { get; }
     public ICommand OpenConnectionFileCommand { get; }
     public ICommand ShareConnectionFileCommand { get; }
+    public ICommand LoadConnectionCommand { get; }
 
     #endregion
 
@@ -123,13 +143,12 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             if (loadedInfo != null && loadedInfo.IsValid())
             {
                 _connectionInfo = loadedInfo;
-                var (success, message) = await _connectionInfo.CheckConnection();
-
-                if (success)
+                var (success, message) = await _connectionInfo.CheckConnection(); if (success)
                 {
                     UpdateConnectionInfoProperties(); // Cập nhật properties với thông tin kết nối đã đọc
                     await _parentPage.DisplayAlert("Thông báo", "Đọc và kiểm tra thông tin kết nối đã lưu thành công!", "OK");
                     _connectionService.ConnectionInfo = _connectionInfo;
+                    _connectionService.HasLoadedInitialConnection = true; // Đánh dấu đã load lần đầu
                     _lastValidConnectionInfo = CloneConnectionInfo(_connectionInfo);
                     IsShareButtonEnabled = true;
                 }
@@ -137,6 +156,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
                 {
                     await _parentPage.DisplayAlert("Lỗi",
                         $"Kết nối thất bại: {message}\nVui lòng sửa và kiểm tra lại thông tin kết nối!", "OK");
+                    _connectionService.HasLoadedInitialConnection = true; // Đánh dấu đã thử load (thành công hay thất bại)
                 }
 
                 return;
@@ -145,10 +165,15 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi khi đọc file cấu hình: {ex.Message}");
+            _connectionService.HasLoadedInitialConnection = true; // Đánh dấu đã thử load (thành công hay thất bại)
         }
 
         // Nếu không đọc được từ file hoặc dữ liệu không hợp lệ, sử dụng giá trị mặc định
-        SetDefaultConnectionInfo();
+        if (!_connectionService.HasLoadedInitialConnection)
+        {
+            SetDefaultConnectionInfo();
+            _connectionService.HasLoadedInitialConnection = true;
+        }
     }
     private void UpdateConnectionInfoProperties()
     {
@@ -156,6 +181,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
         Database = _connectionInfo.Database;
         UserId = _connectionInfo.Username;
         Password = _connectionInfo.Password;
+        DvhcRootId = _connectionInfo.DvhcRootId; // Chuyển đổi sang chuỗi để hiển thị
         UpdateShareButtonState();
         NotifyConnectionInfoChanged();
     }
@@ -166,7 +192,8 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             Server = "localhost",
             Database = "elis",
             Username = "sa",
-            Password = "1234567"
+            Password = "1234567",
+            DvhcRootId = 27 // Mặc định là 27 (Bắc Ninh)
         };
         UpdateConnectionInfoProperties();
         _connectionService.ConnectionInfo = _connectionInfo;
@@ -213,7 +240,8 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             Server = Server,
             Database = Database,
             Username = UserId,
-            Password = Password
+            Password = Password,
+            DvhcRootId = DvhcRootId,
         };
 
         bool isUnchanged = IsConnectionInfoEqual(currentInfo, _lastValidConnectionInfo);
@@ -238,6 +266,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             Database = original.Database,
             Username = original.Username,
             Password = original.Password,
+            DvhcRootId = original.DvhcRootId,
             UseIntegratedSecurity = original.UseIntegratedSecurity,
             ConnectTimeout = original.ConnectTimeout,
             ExpiryDate = original.ExpiryDate
@@ -259,22 +288,23 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             _connectionInfo.Database = Database;
             _connectionInfo.Username = UserId;
             _connectionInfo.Password = Password;
+            _connectionInfo.DvhcRootId = DvhcRootId;
 
             var (success, message) = await _connectionInfo.CheckConnection(); if (success)
             {
-                await _parentPage.DisplayAlert("Thông báo", "Kết nối thành công!", "OK");
+                await _parentPage.DisplayAlert("ℹ Thông báo", "Kết nối thành công!", "OK");
                 await SaveConnection();
                 NotifyConnectionInfoChanged();
             }
             else
             {
                 IsShareButtonEnabled = false;
-                await _parentPage.DisplayAlert("Lỗi", $"Kết nối thất bại: {message}", "OK");
+                await _parentPage.DisplayAlert("⚠ Kết nối thất bại", message, "OK");
             }
         }
         catch (Exception exception)
         {
-            await _parentPage.DisplayAlert("Lỗi", $"Không thể kiểm tra kết nối: {exception.Message}", "OK");
+            await _parentPage.DisplayAlert("❌ Không thể kiểm tra kết nối", exception.Message, "OK");
         }
     }
 
@@ -302,7 +332,7 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
             else if (ex.Message.Contains("No file was selected"))
                 return;
 
-            await _parentPage.DisplayAlert("Lỗi mở tệp", $"Không thể mở thông tin kết nối:\n{errorMessage}", "OK");
+            await _parentPage.DisplayAlert("Không thể mở thông tin kết nối", errorMessage, "OK");
         }
     }
 

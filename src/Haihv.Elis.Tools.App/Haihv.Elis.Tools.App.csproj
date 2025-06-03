@@ -67,7 +67,7 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
@@ -91,6 +91,9 @@
       <Compile Update="ContentPages\ShareConnectionPage.xaml.cs">
         <DependentUpon>ShareConnectionPage.xaml</DependentUpon>
         <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="ContentViews\ExportDataToXmlVBDLIS.xaml.cs">
+        <DependentUpon>ExportDataToXmlVBDLIS.xaml</DependentUpon>
       </Compile>
     </ItemGroup>
 

@@ -11,8 +11,11 @@ public sealed class ConnectionInfo
 
     public string Username { get; set; } = "sa";
 
-    public string Password { get; set; } = "123456"; public bool UseIntegratedSecurity { get; set; }
+    public string Password { get; set; } = "123456";
+    public bool UseIntegratedSecurity { get; set; }
     public int ConnectTimeout { get; set; } = 10;
+
+    public int DvhcRootId { get; set; } = 27;
 
     /// <summary>
     /// Thời gian hết hạn của tệp kết nối. Mặc định là null (không hết hạn)

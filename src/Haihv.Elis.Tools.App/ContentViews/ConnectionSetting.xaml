@@ -5,52 +5,110 @@
              xmlns:views="clr-namespace:Haihv.Elis.Tools.App.Views"
              xmlns:models="clr-namespace:Haihv.Elis.Tools.App.Models"
              xmlns:viewModels="clr-namespace:Haihv.Elis.Tools.App.ViewModels"
+             xmlns:behaviors="clr-namespace:Haihv.Elis.Tools.App.Behaviors"
              x:Class="Haihv.Elis.Tools.App.ContentViews.ConnectionSetting">
 
-    <StackLayout Padding="20"
-                 Spacing="10"
-                 x:DataType="viewModels:ConnectionSettingViewModel">
+       <StackLayout Padding="20"
+                    Spacing="10"
+                    x:DataType="viewModels:ConnectionSettingViewModel">
 
-        <Label Text="Thông tin kết nối dữ liệu"
-               FontSize="18"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               TextColor="DarkBlue" />
+              <Label Text="Thông tin kết nối dữ liệu"
+                     FontSize="18"
+                     FontAttributes="Bold"
+                     HorizontalOptions="Center"
+                     TextColor="DarkBlue"/>
+              <Grid MaximumWidthRequest="600"
+                    RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                    ColumnDefinitions="180,*"
+                    RowSpacing="10"
+                    ColumnSpacing="10">
 
-        <Label Text="Máy chủ dữ liệu:"
-               FontSize="14" />
-        <Entry x:Name="EntryServer"
-               Text="{Binding Server, FallbackValue='localhost'}"
-               Placeholder="Máy chủ dữ liệu" />
+                     <Label Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Máy chủ dữ liệu:"
+                            FontSize="14"
+                            VerticalOptions="Center"/>
+                     <Entry Grid.Row="0"
+                            Grid.Column="1"
+                            x:Name="EntryServer"
+                            Text="{Binding Server, FallbackValue='localhost'}"
+                            Placeholder="Máy chủ dữ liệu"/>
 
-        <Label Text="Tên cơ sở dữ liệu:"
-               FontSize="14" />
-        <Entry x:Name="EntryDatabase"
-               Text="{Binding Database, FallbackValue='elis'}"
-               Placeholder="Tên cơ sở dữ liệu" />
-        <Label Text="Tên tài khoản:"
-               FontSize="14" />
-        <Entry x:Name="EntryUserId"
-               Text="{Binding UserId, FallbackValue='sa'}"
-               Placeholder="Tên tài khoản" />
+                     <Label Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Tên cơ sở dữ liệu:"
+                            FontSize="14"
+                            VerticalOptions="Center"/>
+                     <Entry Grid.Row="1"
+                            Grid.Column="1"
+                            x:Name="EntryDatabase"
+                            Text="{Binding Database, FallbackValue='elis'}"
+                            Placeholder="Tên cơ sở dữ liệu"/>
 
-        <Label Text="Mật khẩu:"
-               FontSize="14" />
-        <Entry x:Name="EntryPassword"
-               IsPassword="True"
-               Text="{Binding Password, FallbackValue='password'}"
-               Placeholder="Mật khẩu" />
+                     <Label Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Tên tài khoản:"
+                            FontSize="14"
+                            VerticalOptions="Center"/>
+                     <Entry Grid.Row="2"
+                            Grid.Column="1"
+                            x:Name="EntryUserId"
+                            Text="{Binding UserId, FallbackValue='sa'}"
+                            Placeholder="Tên tài khoản"/>
 
-        <Button x:Name="CheckConnectionBtn"
-                Text="✅ Kiểm tra Kết nối"
-                Clicked="CheckConnectionBtn_Clicked" />
+                     <Label Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Mật khẩu:"
+                            FontSize="14"
+                            VerticalOptions="Center"/>
+                     <Entry Grid.Row="3"
+                            Grid.Column="1"
+                            x:Name="EntryPassword"
+                            IsPassword="True"
+                            Text="{Binding Password, FallbackValue='password'}"
+                            Placeholder="Mật khẩu"/>
+                     <Label Grid.Row="4"
+                            Grid.Column="0"
+                            Text="Mã đơn vị hành chính gốc:"
+                            FontSize="14"
+                            VerticalOptions="Center"/>
+                     <Entry Grid.Row="4"
+                            Grid.Column="1"
+                            x:Name="EntryDvhcRootId"
+                            Keyboard="Numeric"
+                            Text="{Binding DvhcRootId, FallbackValue='27'}"
+                            Placeholder="Mã đơn vị hành chính gốc">
+                            <Entry.Behaviors>
+                                   <behaviors:NumericBehavior/>
+                            </Entry.Behaviors>
+                     </Entry>
+              </Grid>
+              <Grid MaximumWidthRequest="600"
+                    ColumnDefinitions="Auto,*,*,*"
+                    ColumnSpacing="10"
+                    Margin="0,-40,0,0">
 
-        <Button x:Name="OpenConnectionBtn"
-                Text="📂 Mở tệp kết nối"
-                Clicked="OpenConnectionFileBtn_Clicked" />
-        <Button x:Name="ShareConnectionBtn"
-                Text="💾 Lưu tệp kết nối"
-                IsEnabled="{Binding IsShareButtonEnabled, FallbackValue=false}"
-                Clicked="ShareConnectionFileBtn_Clicked" />
-    </StackLayout>
+                        <Button Grid.Column="0"
+                             x:Name="LoadConnectionBtn"
+                             Text="🔄"
+                             ToolTipProperties.Text="Tải lại cấu hình"
+                             Clicked="LoadConnectionBtn_Clicked"/>
+                  
+                        <Button Grid.Column="1"
+                             x:Name="CheckConnectionBtn"
+                             Text="✅ Kiểm tra Kết nối"
+                             Clicked="CheckConnectionBtn_Clicked"/>
+
+                     <Button Grid.Column="2"
+                             x:Name="OpenConnectionBtn"
+                             Text="📂 Mở tệp kết nối"
+                             Clicked="OpenConnectionFileBtn_Clicked"/>
+
+                     <Button Grid.Column="3"
+                             x:Name="ShareConnectionBtn"
+                             Text="💾 Lưu tệp kết nối"
+                             IsEnabled="{Binding IsShareButtonEnabled, FallbackValue=false}"
+                             Clicked="ShareConnectionFileBtn_Clicked"/>
+              </Grid>
+       </StackLayout>
 </ContentView>

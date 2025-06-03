@@ -1,6 +1,4 @@
-using Haihv.Elis.Tools.App.Models;
 using Haihv.Elis.Tools.App.ViewModels;
-using Haihv.Elis.Tools.App.Views;
 using Haihv.Elis.Tools.Data.Services;
 
 namespace Haihv.Elis.Tools.App.ContentViews;
@@ -102,6 +100,20 @@ public partial class ConnectionSetting : ContentView
         {
             System.Diagnostics.Debug.WriteLine($"ConnectionSetting: Initialize failed: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"ConnectionSetting: Stack trace: {ex.StackTrace}");
+        }
+    }
+
+    private void LoadConnectionBtn_Clicked(object sender, EventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"LoadConnectionBtn_Clicked: _viewModel is {(_viewModel == null ? "null" : "not null")}");
+        if (_viewModel?.LoadConnectionCommand.CanExecute(null) == true)
+        {
+            System.Diagnostics.Debug.WriteLine("LoadConnectionBtn_Clicked: Executing command");
+            _viewModel.LoadConnectionCommand.Execute(null);
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("LoadConnectionBtn_Clicked: Command cannot execute or _viewModel is null");
         }
     }
 

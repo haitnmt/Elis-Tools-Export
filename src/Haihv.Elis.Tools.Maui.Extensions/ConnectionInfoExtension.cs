@@ -52,7 +52,7 @@ public static class ConnectionInfoExtension
     /// <param name="secretKey">Khóa bí mật để mã hóa thông tin kết nối (nếu cần)</param>
     /// <param name="cancellationToken">Token hủy bỏ</param>
     /// <returns>True nếu lưu thành công</returns>
-    private static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo, 
+    private static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo,
         string filePath, string? secretKey = null, CancellationToken cancellationToken = default)
     {
         try
@@ -74,14 +74,14 @@ public static class ConnectionInfoExtension
             return (false, $"Lỗi khi lưu thông tin kết nối: {ex.Message}");
         }
     }
-    
+
     /// <summary>
     /// Lưu thông tin kết nối vào file
     /// </summary>
     /// <param name="connectionInfo">Thông tin kết nối</param>
     /// <param name="cancellationToken">Token hủy bỏ</param>
     /// <returns>True nếu lưu thành công</returns>
-    public static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo, 
+    public static async Task<(bool success, string messager)> SaveConnectionInfoAsync(this ConnectionInfo? connectionInfo,
         CancellationToken cancellationToken = default)
     => await SaveConnectionInfoAsync(connectionInfo, PathConnectionString, cancellationToken: cancellationToken);
 
@@ -97,10 +97,18 @@ public static class ConnectionInfoExtension
             var connectionString = connectionInfo.ToConnectionString();
             await using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
-            const string sql = "SELECT count(GCNQSDD.MaGCN) FROM GCNQSDD WHERE LEN(SoSerial) > 8";
+            const string sql = """
+                                SELECT   COUNT(GCNQSDD.MaGCN) FROM 
+                                GCNQSDD INNER JOIN DangKyQSDD ON GCNQSDD.MaDangKy = DangKyQSDD.MaDangKy INNER JOIN 
+                                ThuaDat ON DangKyQSDD.MaThuaDat = ThuaDat.MaThuaDat INNER JOIN
+                                ToBanDo ON ThuaDat.MaToBanDo = ToBanDo.MaToBanDo
+                                WHERE   (LEN(GCNQSDD.SoSerial) > 8) AND 
+                                (ToBanDo.MaDVHC IN (SELECT [MaDVHC] FROM [DVHC] WHERE MaDVHC > 10000 AND (MaTinh = @MaDVHC OR MaHuyen = @MaDVHC OR MaXa = @MaDVHC)))
+                                """;
             await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@MaDVHC", connectionInfo.DvhcRootId);
             var count = await command.ExecuteScalarAsync() as int? ?? -1;
-            return count < 0
+            return count <= 0
                 ? (false, "Không có thông tin Giấy chứng nhận hợp lệ nào trong cơ sở dữ liệu.")
                 : (true, "Kết nối đến cơ sở dữ liệu thành công.");
         }
@@ -110,12 +118,12 @@ public static class ConnectionInfoExtension
         }
     }
 
-    public static async Task<(ConnectionInfo? connectionInfo, string message)> ImportConnectionSettings(this string filePath, 
+    public static async Task<(ConnectionInfo? connectionInfo, string message)> ImportConnectionSettings(this string filePath,
         string? secretKey = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            var importedConnection =  await LoadConnectionInfoAsync(filePath, secretKey, cancellationToken);
+            var importedConnection = await LoadConnectionInfoAsync(filePath, secretKey, cancellationToken);
 
             if (importedConnection != null && importedConnection.IsValid())
             {
@@ -130,7 +138,7 @@ public static class ConnectionInfoExtension
         }
     }
 
-    public static async Task<(bool success, string message)> ExportConnectionSettings(this ConnectionInfo? connectionInfo, 
+    public static async Task<(bool success, string message)> ExportConnectionSettings(this ConnectionInfo? connectionInfo,
         string? secretKey = null, CancellationToken cancellationToken = default)
     {
         var file = string.Empty;
@@ -141,7 +149,7 @@ public static class ConnectionInfoExtension
             {
                 return (false, "Thông tin kết nối không hợp lệ. Vui lòng kiểm tra lại.");
             }
-            
+
             // Tạo đường dẫn file để lưu thông tin kết nối
             var fileName = $"elis_connection_{connectionInfo.Database}_{DateTime.Now:yyyyMMdd_HHmmss}.inf";
             var downloadPath = FileHelper.GetDownloadFolderPath();
@@ -149,7 +157,7 @@ public static class ConnectionInfoExtension
 
             // Lưu thông tin kết nối vào file (có mã hóa)
             var (success, message) = await connectionInfo.SaveConnectionInfoAsync(file, secretKey, cancellationToken);
-            return (success, success? file : $"Lỗi khi xuất thông tin kết nối: {message}");
+            return (success, success ? file : $"Lỗi khi xuất thông tin kết nối: {message}");
 
         }
         catch (Exception ex)
