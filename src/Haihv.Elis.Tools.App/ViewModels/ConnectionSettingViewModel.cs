@@ -20,7 +20,8 @@ public sealed class ConnectionSettingViewModel : INotifyPropertyChanged
     private string _userId = "sa";
     private string _password = "1234567";
     private int _dvhcRootId = 27; // Mặc định là 27 (Bắc Ninh)
-    private bool _isShareButtonEnabled; public ConnectionSettingViewModel(ConnectionService connectionService, Page parentPage)
+    private bool _isShareButtonEnabled;
+    public ConnectionSettingViewModel(ConnectionService connectionService, Page parentPage)
     {
         _connectionService = connectionService;
         _parentPage = parentPage;

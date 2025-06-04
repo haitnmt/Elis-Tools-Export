@@ -15,8 +15,7 @@
               <Label Text="Thông tin kết nối dữ liệu"
                      FontSize="18"
                      FontAttributes="Bold"
-                     HorizontalOptions="Center"
-                     TextColor="DarkBlue"/>
+                     HorizontalOptions="Center"/>
               <Grid MaximumWidthRequest="600"
                     RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                     ColumnDefinitions="180,*"

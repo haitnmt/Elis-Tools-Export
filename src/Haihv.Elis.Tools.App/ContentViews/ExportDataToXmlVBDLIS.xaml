@@ -2,6 +2,49 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Haihv.Elis.Tools.App.ViewModels"
              x:Class="Haihv.Elis.Tools.App.Views.ExportDataToXmlVBDLIS">
-    
+  <StackLayout Padding="20"
+               Spacing="10"
+               x:DataType="viewModels:ExportDataToXmlVBDLISViewModel">
+
+    <Grid ColumnDefinitions="Auto,*"
+          RowSpacing="10"
+          ColumnSpacing="10"
+          IsEnabled="{Binding DatabaseReady, FallbackValue='false'}">
+      <Grid MinimumWidthRequest="400"
+            RowDefinitions="Auto,Auto,Auto"
+            ColumnDefinitions="180,*"
+            RowSpacing="10"
+            ColumnSpacing="10">
+        <Label Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
+               Text="Điều kiện lọc dữ liệu"
+               FontSize="14"
+               FontAttributes="Bold"
+               HorizontalOptions="Start"/>
+        <Label Grid.Row="1"
+               Grid.Column="0"
+               Text="Chọn đơn vị hành chính:"
+               FontSize="14"
+               VerticalOptions="Center"/>
+        <Entry Grid.Row="1"
+               Grid.Column="1"
+               x:Name="EntryDvhc"
+               Text="Test"
+               Placeholder="Chọn đơn vị hành chính"/>
+
+        <Label Grid.Row="2"
+               Grid.Column="0"
+               Text="Chọn tờ bản đồ"
+               FontSize="14"
+               VerticalOptions="Center"/>
+        <ListView Grid.Row="2"
+               Grid.Column="1"
+               x:Name="EntryTBD"/>
+
+      </Grid>
+    </Grid>
+  </StackLayout>
 </ContentView>

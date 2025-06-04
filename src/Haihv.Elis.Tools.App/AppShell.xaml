@@ -7,6 +7,6 @@
     xmlns:local="clr-namespace:Haihv.Elis.Tools.App"
     Title="Trích xuất dữ liệu ELIS SQL">
     <ShellContent
-    ContentTemplate="{DataTemplate local:MainPage}"
-    Route="MainPage"/>
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage"/>
 </Shell>

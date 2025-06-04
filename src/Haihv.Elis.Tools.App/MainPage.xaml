@@ -4,20 +4,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="using:Haihv.Elis.Tools.App.Controls"
              xmlns:viewModels="clr-namespace:Haihv.Elis.Tools.App.ViewModels"
-             x:Class="Haihv.Elis.Tools.App.MainPage">
-    
+             x:Class="Haihv.Elis.Tools.App.MainPage"
+             Title="Công cụ trích xuất dữ liệu ELIS SQL">
+
     <Grid RowDefinitions="Auto,*,Auto">
         <!-- Header cố định -->
         <StackLayout Grid.Row="0"
-                     VerticalOptions="Start"
-                     BackgroundColor="#2E3440">
-            <!-- Title -->
-            <Label Text="Công cụ trích xuất dữ liệu ELIS SQL"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   Margin="0,8,0,8"/>
+                     VerticalOptions="Start">
 
             <!-- Modern Toolbar Component -->
             <controls:ModernToolbar ItemsSource="{Binding ToolbarItems}"
@@ -33,7 +26,7 @@
                      x:DataType="viewModels:MainViewModel"/>
         <!-- Footer cố định với thiết kế tối ưu -->
         <Border Grid.Row="2"
-                BackgroundColor="#3B4252"
+                BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#3B4252}"
                 Padding="12,8"
                 StrokeThickness="0">
             <Border.StrokeShape>
@@ -44,21 +37,21 @@
                        Text="🌐"
                        FontSize="12"
                        VerticalOptions="Center"
-                       TextColor="#81A1C1"/>
+                       TextColor="{AppThemeBinding Light=#3B82F6, Dark=#81A1C1}"/>
                 <Label Grid.Column="1"
                        x:DataType="viewModels:MainViewModel"
                        Text="{Binding RenderConnectionInfo, FallbackValue='Chưa kết nối'}"
                        FontSize="11"
                        FontFamily="Consolas"
                        VerticalOptions="Center"
-                       TextColor="#D8DEE9"/>
+                       TextColor="{AppThemeBinding Light=#374151, Dark=#D8DEE9}"/>
                 <Label Grid.Column="2"
                        Text="©2025 | vpdkbacninh.vn | haihv.vn"
                        FontSize="11"
                        FontFamily="Consolas"
                        HorizontalOptions="End"
                        VerticalOptions="Center"
-                       TextColor="#D8DEE9"/>
+                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#D8DEE9}"/>
             </Grid>
         </Border>
     </Grid>

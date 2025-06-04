@@ -7,20 +7,18 @@
              x:Name="root">
 
     <!-- Modern Responsive Toolbar -->
-    <Border BackgroundColor="#3B4252"
-            StrokeThickness="0"
+    <Border StrokeThickness="0"
             Padding="8,6">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="10"/>
         </Border.StrokeShape>
         <Border.Shadow>
-            <Shadow Brush="#1a1a1a"
+            <Shadow Brush="{AppThemeBinding Light=#1a1a1a, Dark=#0a0a0a}"
                     Offset="0,2"
                     Radius="4"
                     Opacity="0.3"/>
         </Border.Shadow>
         <CollectionView x:Name="ToolbarCollectionView"
-                        BackgroundColor="Transparent"
                         HeightRequest="48"
                         SelectionChanged="OnItemTapped">
             <CollectionView.ItemsLayout>
@@ -45,7 +43,7 @@
                                          Binding="{Binding IsActive}"
                                          Value="True">
                                 <Setter Property="BackgroundColor"
-                                        Value="#434C5E"/>
+                                        Value="{AppThemeBinding Light=#E3E7EA, Dark=#434C5E}"/>
                                 <Setter Property="Stroke"
                                         Value="{Binding IconColor}"/>
                             </DataTrigger>
@@ -63,7 +61,7 @@
                                 <VisualState Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Property="BackgroundColor"
-                                                Value="#4C566A"/>
+                                                Value="{AppThemeBinding Light=#D1D5DB, Dark=#4C566A}"/>
                                         <Setter Property="Stroke"
                                                 Value="{Binding IconColor}"/>
                                     </VisualState.Setters>
@@ -71,9 +69,9 @@
                                 <VisualState Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Property="BackgroundColor"
-                                                Value="#5E81AC"/>
+                                                Value="{AppThemeBinding Light=#9CA3AF, Dark=#5E81AC}"/>
                                         <Setter Property="Stroke"
-                                                Value="#ECEFF4"/>
+                                                Value="{AppThemeBinding Light=#374151, Dark=#ECEFF4}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -91,7 +89,7 @@
                                    FontSize="13"
                                    FontAttributes="Bold"
                                    VerticalOptions="Center"
-                                   TextColor="#ECEFF4"
+                                   TextColor="{AppThemeBinding Light=#1F2937, Dark=#ECEFF4}"
                                    LineBreakMode="TailTruncation"/>
                         </Grid>
                     </Border>
